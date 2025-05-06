@@ -1,0 +1,191 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+\begin{document}
+
+\title{Linearisation of PDEs}
+\author{Nirupam Khanal / Niv, Prajwal Neupane / PJ}
+\date{26-Mar-2025}
+
+\maketitle
+\tableofcontents
+
+\section{Lemma}
+
+The process of a dissipating collection of smoke, and the diffusion of an optical wave function traveling through a dense medium 
+\[
+ \Pi_{i} \rho_{i} \ne 0 
+\]
+follow essentially a family of synchronous composite morphisms. Formally
+
+\subsection{Hamiltonians and equivalent classes of eigenstates:} 
+
+% For \(x \in X \subset \mathbb{R}^d\),
+\[
+\hat{\mathcal{H}} := \left\{ \frac{\hbar^2}{2m} \nabla_{\vec x}^2 + V(\vec x) \right\}, \quad \hat{\mathcal{E}} := \hat{\mathbb{E}} \equiv -i\hslash \nabla_{t}
+\] \\ 
+The Hamiltonian appears to be time-independent in this system whereas the eigenstate operators can be decomposed into their inverse functionals.
+
+\[
+\hat{\mathcal{H}} \Psi(\vec x) = \hat{{E}} \Psi(t) \quad \implies \quad \hat{\mathcal{H}} \psi(\vec x) = \hat{\mathbb{E}}[\xi] 
+\]
+
+\[
+\text{let: } \hat{\mathcal{H}} = a \nabla_{\vec x}^2 + V(\vec x) \quad\iff\quad  \hat{\mathbb{E}} = -i\hbar = ia
+\]\\
+The Hamiltonian is generalized to a spacial constant which experiences a symmetric degree of rotation in the sense of its eigenfunctions rotating about the complex plane. Here, each individual position of the particle examined is given by its linear position in the complex manifold. $N(x)$ denotes the dimensionality of the described particle system.
+
+\begin{align}
+\hat{\mathcal{H}} \psi = ia \;;\quad \lim_{N(x) \to 1}
+\end{align} \\ 
+An indicative hint is to think of the action of the Pauli-Z operator.
+
+\subsection{Motion of fluids}
+\[
+\rho \nabla_t \vec u(t, \vec x) = \mu \nabla^2 \vec u(t, \vec x) + \gamma \vec u
+\]
+
+\[
+\nabla_{t} \vec u = a\nabla_{\vec x}^{2} \vec u + \hat{\Gamma} \;,\quad \text{where } \; \Gamma := \gamma \vec u.
+\] \\ 
+Equivalently, we can write the two following equations: 
+
+\begin{align}
+    a \nabla_{\vec x}^{2} \vec u + \hat\Gamma = \nabla_{t} \vec u \quad \And \quad  \left(a\nabla_{\vec x}^{2} - \nabla_{t}\right) \vec u = -\hat\Gamma = \;\mid\gamma\langle \vec x, \vec x\rangle\mid\;.
+\end{align}
+
+% \[
+% \implies \mathcal{R} \hat{u} = -a \nabla^2 u + \hbar \mathcal{R} u
+% \]
+
+% \[
+% \psi = a \nabla^2 + \mathcal{R} = b \nabla_t
+% \]
+
+% \[
+% \psi = a \nabla_x^2 + b \nabla_t = \mathcal{R} = \mathcal{R} Y(\nabla_x, x)
+% \]
+
+
+\textbf{Observations}
+\begin{itemize}
+    \item We have a 1D time-stationary diffusion process, that is 
+    \[
+    \hat{\mathcal{H}}(0, \vec x) = \hat{\mathcal{E}}(\tau, \vec x)
+    \]
+    \item We have a projection potential:
+    \[
+    \hat\Gamma({\vec u}) := \lim\hat\Gamma = \gamma, 
+    \]\\
+    which is bounded, and \( \nabla_{t} \langle x, x \rangle \to \kappa\) evolves synchronously with \( i\hbar \).
+\end{itemize}
+
+\subsection{Composite Mapping Process}
+We now propose a composite mapping process that is 
+
+\[
+\hat{\Gamma} = T(\hat{x}) \cdot \hat{P}(t),
+\] \\ 
+where $T(\hat{x})$ is a spatial transformation and $\hat{P}(t)$ captures the temporal evolution. The formalism for the above relationship is given by the composition $\mathbb{f}:\hat \tau \circ \vec P \mapsto \hat \Gamma $. \\ \\
+Comparison of the projection potential with the following:
+
+\[
+\hat{H}(\hat{x}) = \hat{E}(T, \hat{x}) = \hat{E}(\tau)\, \hat{E}(\hat{x}) \iff \hat{\mathcal{H}}(\vec x) = -i\hbar\hat{E}(\tau)
+\] \\ 
+we see that the composite operator $\hat{\Gamma}(\vec u) = T(\vec x)\vec p(t) $ links the Hamiltonian dynamics with the fluid's kinematic evolution. In particular, one may arrive at an identification such as the following: 
+
+\[
+\gamma = T(\vec x)\langle p \rangle = \tau i\hbar \; T(\vec x) \quad \therefore T(\vec x) = -\frac{i\gamma}{\tau\hslash}
+\] \\
+The above identification leads to two significant results:
+
+\begin{align}
+    i\hslash \hat E(\tau) = -\frac{i\gamma}{\tau \hbar} \implies \hslash^{2} \hat E(\tau) = \frac{\gamma}{\tau } \quad \therefore \hat E(\tau) = \frac{\gamma}{\tau \hbar^{2}} = -\frac{\gamma}{\hbar p^{2}}
+\end{align} 
+
+\begin{align}
+    \hat{\mathcal{H}}(\vec x) \iff T(\vec x) \quad \text{ and } \quad \hat{\mathbb{E}} \mapsto \mathcal{E}(\tau). 
+\end{align}\\ 
+% \hat{\Gamma}(\hat{u}) = T(\hat{x})\, \hat{P}(t)\, \hat{H}(\hat{x}) = -i\, \hat{E}(T),
+% which, after rearrangement and taking appropriate limits, yields relations of the form:
+
+% \[
+% \gamma = \hat{E}(T)\, \hat{T}\, \hat{b}\, \hat{T}(\hat{x}) \cdot -i\, \hat{E}(T)
+% \]\\
+% and subsequently
+
+% \[
+% \hat{T}(\hat{x}) = \frac{-i\, \gamma}{\hat{T}\, \hat{b}\, \hat{k}}.
+% \] \\ 
+% Taking inner products and considering norms, one eventually finds
+
+% \[
+% \langle P \rangle = \hat{H}\, \hat{T}\, \hat{b}\, \hat{k} \quad \text{and} \quad \hat{E}(T) = \frac{\gamma}{\hat{T}\, \hat{b}\, \hat{k}^2}.
+% \] \\ 
+% Moreover, for the momentum operator we obtain
+
+% \[
+% \hat{P}^2 = \langle \hat{P} \cdot \hat{P} \rangle = \frac{\gamma^2}{\hat{T}\, \hat{b}\, \hat{k}^2}.
+% \] \\ 
+% We have a process:
+
+% \[
+% \hat{\Gamma} = T(x) \cdot \hat{P}(t)
+% \]
+
+% Comparing:
+% \[
+% \hat{H}(x) = \hat{E}(T, x) = \hat{E}(T) \hat{E}(x)
+% \]
+
+% \[
+% \Rightarrow \hat{\Gamma}(\hat{u}) = T(x) \hat{P}(t) \Rightarrow \hat{H}(x) = -i\hbar \hat{E}(T)
+% \]
+
+% \[
+% \Rightarrow \gamma = \hat{E}(T) \hat{T} i b t T(x)
+% \]
+
+% \[
+% T(x) = \frac{-i \gamma}{t b k}
+% \]
+
+% \[
+% \hat{H}(x) \leq T(x)
+% \]
+
+% \[
+% \langle p \rangle = \hat{T} i b t
+% \]
+
+% \[
+% \hat{P}^2 = \hat{P} \cdot \hat{P} = \langle \hat{P}, \hat{P} \rangle = -2 b k
+% \]
+
+% \[
+% E(T) = \frac{\gamma}{t b k^2}
+% \]
+
+\subsection{Homomorphic Mapping}
+The equations above suggest an equivalence between the dynamics of fluid motion (governed by diffusion-like operators) and quantum Hamiltonian dynamics. By reinterpreting the classical operators in a quantum framework, we find that:
+\begin{itemize}
+    \item The classical diffusion operator $a\, \nabla_{\vec{x}}^2$ can be embedded into a Hamiltonian $\hat{\mathcal{H}} = a\, \nabla_{\vec{x}}^2 + V(\vec{x})$.
+    \item A composite mapping $\hat{\Gamma} = T(\hat{x}) \cdot \hat{P}(t)$ serves to couple spatial and temporal dynamics in a way that preserves the structure of the system.
+    \item The identification $\hat{\mathbb{E}} = -i\hbar = ia$ provides a bridge between the classical parameter $a$ and quantum mechanical energy scales.
+    \item Under these correspondences, one obtains eigenvalue equations and momentum relations that closely mimic those in standard quantum mechanics, with the added twist that the underlying system also describes the motion of a dissipative fluid.
+\end{itemize}
+
+\section{Open problem}
+\begin{itemize}
+    \item The two processes are described by a homomorphic composite map:
+    \[
+    V \mapsto T(x) E(t)
+    \]
+    \item Furthermore, we want to note that a map from a simple structure to a composite nonlinear algebraic structure is a structure-preserving map.
+\end{itemize} 
+
+\noindent 
+
+\end{document}

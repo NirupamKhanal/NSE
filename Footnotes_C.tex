@@ -1,0 +1,43 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+\begin{document}
+
+\title{Examining the Emergence of Hermicity}
+\author{Nirupam Khanal / Niv}
+\date{06-May-2025}
+
+\maketitle
+\tableofcontents
+
+\section{Defining Hermicity}
+A hilbert space denoted as, $L^{2}(D),$ is a squared-integrable functional space with $L^{p}$ norm defined by an inner product $\langle u,u\rangle = ||.||$, where $p=2$. A hermitian, or self-adjoint operator satisfies the following condition 
+
+\begin{align}
+    \langle \phi \mid \hat A \psi\rangle = \langle \hat A \phi \mid \psi \rangle
+\end{align} \\ 
+for all vectors $\mid\phi\;\rangle, \mid \psi\;\rangle$ in a Hilbert space. This essentially means that $\hat A = A^\dagger$, where $A^{\dagger}$ is the Hermitian adjoint of the linear transformation $\hat A$. We want to examine the following eigenvalue decomposition, where $h:X \mapsto Y$ and $g:Y \mapsto \mathbb{R}$ are measurable maps.
+
+\begin{align}
+    \int_{Y} g \;d(h*\mu) = \int_{X} g \circ h \; d\mu
+\end{align} \\ 
+This equation has multiple representations. We may see some of the following in other texts: 
+
+\[
+\int \Phi * \hat\Omega \Psi \,dx = \int (\hat\Omega \Phi) * \Psi \,dx
+\] \\ 
+In form, we are exchanging the ordering of the linear transformations applied to our vector space, and the convolution applied. If the function is invariant of the order of the function, we say it is Hermitian. 
+
+\section{Open Problem}
+We want to show that Hermicity follows as from the substitution rules for measurable maps. 
+
+\begin{align}
+    \mu(M) = \int_{X_{2}} \mu_{1} (M_{Y}) \, d\mu_{2}(Y) = \int_{X_{1}} \mu_{2} (M_{X}) \, d\mu_{1}(X).
+\end{align}
+
+
+
+
+\end{document}

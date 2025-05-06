@@ -1,0 +1,1095 @@
+%%--------------------------------------------------------
+%% example.tex
+%%
+%%--------------------------------------------------------
+\documentclass[12pt]{article}
+\input{prefix}%
+\usepackage{enumitem, amssymb, bbold}
+
+\BibLatexMode{%
+   \bibliography{template}
+}
+
+\begin{document}
+
+\title{The complete analytical proof of global regularity and boundedness of the general Navier Stokes equations}
+
+\author{%
+   Nirupam Khanal / Niv%
+}
+
+\date{\today}
+
+\maketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center}
+    {Velocity field equations:}
+\end{center}
+\[\nabla\cdot\vec{u} = 0\]
+
+\[\rho \frac{\partial\vec{u}}{\partial t} + \rho (\vec{u}\cdot\nabla)\vec{u} = -\nabla p + \mu \nabla^{2} \vec{u} + \vec{f}\]
+
+\[\text{I.V.C. }\;\;\;\;\;\; \vec u (\vec x, 0) = u_{0}(\vec x) \;\;\;;\;\;\; \vec x\in\mathbb{R}^{n} \] \\
+
+\begin{center}
+    Vorticity field equations:
+\end{center}
+\[\nabla \times \vec u \equiv \vec \omega \qquad \nabla \cdot \vec \omega = 0 \qquad \nabla \times \nabla \phi = \vec 0 \]
+
+\[\frac{D \vec \omega}{Dt} = \frac{\partial \vec \omega}{\partial t} + \nabla \times (\vec u \cdot \nabla) \vec u = (\vec \omega \cdot \nabla) \vec u + \nu \nabla^{2} \vec \omega\]
+
+\[\frac{\partial \vec \omega}{\partial t} + \vec u \times \nabla^{2} \vec u - (\nabla_{u} - \nabla_{\omega}) ( \vec u \cdot \vec \omega) = \nu \nabla^{2} \vec \omega\]
+
+\[\frac{\partial \vec u}{\partial \theta} \propto \frac{1}{r} = \begin{cases}
+    \Omega r\;, & r < a \\ 
+    \frac{\Omega a^{2}}{r} \;,& r > a 
+\end{cases} \quad ; \quad \Omega \in \mathbb{R} \quad , \quad \vec u \in \mathbb{R} \times \mathbb{R}^{n} \] 
+
+\newpage 
+
+\abstract 
+This work explores analytical solutions to the Navier-Stokes equations by leveraging symbolic decomposition techniques. We begin by examining existing results and structuring the governing equations using bilinear mappings and eigenfunction expansions. The proof framework is developed through fundamental energy identities and projection operators, enabling a systematic approach to handling nonlinear vector fields. Special attention is given to dealing with singularities and rewriting the governing equations in a form that aligns with known analytical solutions. We further classify equivalent solution sets through separation of variables, projection methods, and eigenfunction decomposition, ensuring compatibility with established analytical techniques. Finally, we discuss topological charge via the circulation identity from Stokes' theorem, drawing connections to complex analysis through the winding number and quaternionic residue theorem. The findings confirm that our decomposition framework effectively encapsulates the known solutions, reinforcing its applicability in fluid dynamics and mathematical physics.
+
+\tableofcontents \newpage
+
+\section{Problem Statement}
+The \href{https://www.claymath.org/wp-content/uploads/2022/06/navierstokes.pdf}{formalism} of the Navier Stokes Equations problem statement, as provided by the Clay Institute, is as follows: \\ 
+
+" A fundamental problem in analysis is to decide whether such smooth, physically
+reasonable solutions exist for the Navier–Stokes equations. To give reasonable leeway to solvers while retaining the heart of the problem, we ask for a proof of one of the following four statements. \\
+
+[Existence and smoothness cases:]
+\begin{itemize}
+
+    \item[(A)] \textbf{Existence and smoothness of Navier–Stokes solutions on $\mathbb{R}^3$.}  
+    Take $\nu > 0$ and $n = 3$. Let $u^\circ(x)$ be any smooth, divergence-free vector field satisfying [constraints (4, 5)].  
+    Take $f(x, t)$ to be identically zero. Then there exist smooth functions $p(x, t)$, $u_i(x, t)$  
+    on $\mathbb{R}^3 \times [0, \infty)$ that satisfy [the system of PDEs, existence and boundedness/smoothness].
+
+    \item[(B)] \textbf{Existence and smoothness of Navier–Stokes solutions in $\mathbb{R}^3/\mathbb{Z}^3$.}  
+    Take $\nu > 0$ and $n = 3$. Let $u^\circ(x)$ be any smooth, divergence-free vector field satisfying [assumption (8)].  
+    Take $f(x, t)$ to be identically zero. Then there exist smooth functions $p(x, t)$, $u_i(x, t)$  
+    on $\mathbb{R}^3 \times [0, \infty)$ that satisfy [the system of PDEs, spatially periodic existence and boundedness/smoothness].
+
+[Non-existence/non-smooth/singular cases:]
+    \item[(C)] \textbf{Breakdown of Navier–Stokes solutions on $\mathbb{R}^3$.}  
+    Take $\nu > 0$ and $n = 3$. Then there exist a smooth, divergence-free vector field $u^\circ(x)$ on $\mathbb{R}^3$  
+    and a smooth $f(x, t)$ on $\mathbb{R}^3 \times [0, \infty)$, satisfying (4), (5), for which there exist no solutions $(p, u)$  
+    of (1), (2), (3), (6), (7) on $\mathbb{R}^3 \times [0, \infty)$.
+
+    \item[(D)] \textbf{Breakdown of Navier–Stokes solutions on $\mathbb{R}^3/\mathbb{Z}^3$.}  
+    Take $\nu > 0$ and $n = 3$. Then there exist a smooth, divergence-free vector field $u^\circ(x)$ on $\mathbb{R}^3$  
+    and a smooth $f(x, t)$ on $\mathbb{R}^3 \times [0, \infty)$, satisfying (8), (9), for which there exist no solutions $(p, u)$  
+    of (1), (2), (3), (10), (11) on $\mathbb{R}^3 \times [0, \infty)$.
+\end{itemize}
+
+These problems are also open and very important for the Euler equations ($\nu = 0$), although the Euler equation is not on the Clay Institute’s list of prize problems." \\ \\
+We are particularly interested in the first two statements. A breakdown of the statements is described below: \\
+
+[Statement (A)]
+
+\[\text{We have the restrictions: }\; \|\partial_{\vec x}^{\alpha} u_{0}(\vec x)\| \le \mathbf{C}_{\alpha K} (1 + \|x\|)^{-K}\;\;\;;\;\;\; \text{ on } \mathbb{R}^{n},\;\forall\, \alpha, K \]
+\[\text{and }\; \|\partial_{\vec x}^{\alpha} \partial_{t}^{m} \vec f(\vec x, t)\| \le \mathbf{C}_{\alpha mK} (1+\|x\|+t)^{-K}\;\;\;;\;\;\; \text{ on }\mathbb{R}^{n} \times [0,\infty),\;\forall\, \alpha, m, K\] \\
+The given restrictions enforce smoothness and polynomial decay at infinity for the initial condition $u_{0}(\vec x)$ and the forcing term $\vec f(\vec x, t)$. For such solution sets, the following classes of solutions are considered physically reasonable: 
+\[ p, \vec u \in \mathbf{C}^{\infty}(\mathbb{R}^{n}\times[0,\infty)) \;\text{ existence}\]
+\[\int_{\mathbb{R}^{n}} \|\vec u (\vec x, t)\|^{2} \, dx < \mathbf{C}\;;\;\forall \, t \ge 0 \;\text{ boundedness.}\] \\
+
+[Statement (B)]
+\[\text{We have: }\; u_{0} (x + e_{j}) = u_{0} (\vec x) \;,\; \vec f (x + e_{j}) = \vec f (\vec x, t)\;;\;\;\; 1 \le j \le n \]
+$\vec e_{j} \in \mathbb{R}^{n}$ gives us a basis of dimension $n$.
+\[\text{Assuming: }\; \|\partial_{\vec x}^{\alpha} \partial_{t}^{m} \vec f(\vec x, t)\| \le \mathbf{C}_{\alpha mK} (1+\|x\|)^{-K}\;\;\;;\;\;\; \text{ on }\mathbb{R}^{3} \times [0,\infty),\;\forall\, \alpha, m, K \] \\
+The periodicity condition indicates that $u_{0}$ and $\vec f$ are spatially periodic, but the decay condition may apply to deviations from a periodic background. The decay and smoothness conditions ensure that the PDE has a well-posed solution and that the solution inherits smoothness and decay properties. The system admits "stationary" or normalizable eigenstate solutions in three dimensions: 
+\[\vec u (\vec x, t) = \vec u (x + e_{j}, t)\;\;\;;\;\;\; \text{ on }\mathbb{R}^{3} \times [0, \infty)\;;\;\;\; 1 \le j \le 3 \]
+\[ p, \vec u \in \mathbf{C}^{\infty}(\mathbb{R}^{n}\times[0,\infty)) \;\text{ existence.}\]
+
+\section{Examining the Navier Stokes Equations}
+The following section is motivated by the \href{https://arxiv.org/pdf/1402.0290}{paper} and \href{https://terrytao.wordpress.com/2014/02/04/finite-time-blowup-for-an-averaged-three-dimensional-navier-stokes-equation/}{subsequent blog} by Tao. \\
+
+The Navier Stokes equation in its general term can be written as follows: 
+\[\nabla\cdot\vec{u} = 0\]
+\[\rho \frac{\partial\vec{u}}{\partial t} + \rho (\vec{u}\cdot\nabla)\vec{u} = -\nabla p + \mu \nabla^{2} \vec{u} + \vec{f}\]\\
+The first equation is referred to as the continuity equation, whereas the second is known as the momentum equation. The continuity equation establishes that the fluid in question is incompressible. The L.H.S. of the second equation is known as the material derivative, which gives us the total acceleration of a fluid parcel. The R.H.S. consists of the pressure gradient, the viscous diffusion, and the external forces terms. \\ \\
+The $(\vec u \cdot \nabla ) \vec u$ and $\nabla p$ terms are truly the celebrity here, and they make this system of nonlinear equations very hard to solve. Indeed, we can treat the second terms as just another inhomogeneous component of a system of PDEs. However, a more thorough examination of the first term can be motivated. We will look at some special cases for which the equation is well understood to motivate our discussion further. We also want to examine the vorticity equations, an equivalent formulation of the Navier Stokes equations written above in velocity form, to describe the curl of the vector field, defined from a scalar gradient $\phi$. 
+
+\[\nabla \times \vec u \equiv \vec \omega \qquad \nabla \cdot \vec \omega = 0 \qquad \nabla \times \nabla \phi = \vec 0 \]
+
+\[\frac{D \vec \omega}{Dt} = \frac{\partial \vec \omega}{\partial t} + \nabla \times (\vec u \cdot \nabla) \vec u = (\vec \omega \cdot \nabla) \vec u + \nu \nabla^{2} \vec \omega\] \\ 
+We note that these particular formulations of the Navier Stokes equations have been \href{https://www.diva-portal.org/smash/get/diva2:205082/fulltext01.pdf}{solved analytically} in a number of cases before as well, which we will scrutinize. Furthermore, we are interested in examining the \href{http://brennen.caltech.edu/fluidbook/basicfluiddynamics/equationsofmotion/vorticitytransport.pdf}{vorticity transport equation}, which is formulated below. It describes the vortex motion in $nD$ space, and we will crucially review its implications in our discussion of quaternion / Clifford algebraic singularities. 
+
+\[\frac{\partial \vec \omega}{\partial t} + \vec u \times \nabla^{2} \vec u - (\nabla_{u} - \nabla_{\omega}) ( \vec u \cdot \vec \omega) = \nu \nabla^{2} \vec \omega\]  \\ 
+The vorticity transport equation describes the evolution of the vorticity field \( \vec{\omega} \equiv \nabla \times \vec{u} \) in a fluid governed by the Navier Stokes equations. This equation accounts for various mechanisms influencing vorticity dynamics, including convection, stretching, tilting, and viscous dissipation. The material derivative, which occupies the left-hand side of the curl-operated equations, represents the total rate of change of vorticity as seen by a moving fluid element. The term \( (\vec{\omega} \cdot \nabla) \vec{u} \) describes vorticity stretching and tilting, which play a crucial role in turbulence and vortex interactions. Finally, the diffusion term \( \nu \nabla^2 \vec{\omega} \) accounts for the spread of vorticity due to viscosity, ensuring the smooth dissipation of vortices over time. \\  \\
+In higher-dimensional spaces, vorticity transport takes on additional complexity due to interactions with rotational modes inherent in these spaces. The term $\vec{u} \times \nabla^2 \vec{u}$ represents the generation of vorticity from velocity field curvature, while $(\nabla_u - \nabla_{\omega}) ( \vec{u} \cdot \vec{\omega})$ captures nonlinear interactions between velocity gradients and vorticity evolution. The fundamental properties of vorticity, such as its divergence-free nature (\( \nabla \cdot \vec{\omega} = 0 \)), remain intact, but the interplay between stretching, diffusion, and rotational effects becomes more intricate. These considerations are particularly relevant when extending vortex dynamics to quaternionic or Clifford algebraic frameworks, where singularities and conserved quantities may exhibit novel behaviors in higher-dimensional fluid flows.
+
+
+
+
+\subsection{Previous results}
+
+\[\rho\frac{D}{Dt}\vec u = \rho \left( \frac{\partial \vec u}{\partial t} - (\vec u \cdot \nabla )\vec u \right) = -\nabla p + \mu \nabla^{2} \vec u + \vec f \;;\; \vec u (\vec x, t) \in \mathbb{R}^{n \times 1}\]
+
+\subsubsection {Case I}
+\textbf{\[\text{Let } \mathbb{V} := \{\vec u := \Psi (x,t)\;|\;\forall \,\vec u \in \mathbb{R}^{1 \times 1} \}\;\;\;,\;\;\; \vec f := \vec 0 \]}
+
+\[\rho\frac{D}{Dt} \Psi(x,t) = \rho \left( \frac{\partial \Psi(x,t)}{\partial t} - (\Psi(x,t) \cdot \nabla )\Psi(x,t) \right) = -\nabla p + \mu \nabla^{2}\Psi(x,t)\]
+
+ \[\implies \rho \frac{\partial \Psi}{\partial t}  = \mu \frac{\partial^{2}}{\partial x^{2}}\Psi + \frac{\partial}{\partial x} p + \rho \left(\Psi \cdot \frac{\partial}{\partial x} \right)\Psi =  \mu \frac{\partial^{2}}{\partial x^{2}}\Psi + V(\Psi, \Psi)\] \\ 
+ We can see that we now have a Hamiltonian formulation of the equation. Let $\Psi (x, t) := \psi(x)\phi(t). \therefore $ The potential energy is said to be $V(\Psi, \Psi) := V(x,t)$. This decomposition motivates us to study the evolution of the potential of the system. Firstly, consider the time-independent cases of the system, such that $V(x,t):= u(x)$. 
+
+ \[\mu \frac{\partial^{2}}{\partial x^{2}}\psi(x) + u(x)\psi(x) = \mu \frac{\partial^{2}}{\partial x^{2}}\psi(x) - \kappa \psi(x) = \left( \mu \frac{\partial^{2}}{\partial x^{2}} - \kappa \right)\psi(x) = \hat E \psi(x)\]
+
+$\therefore $ We have a well-defined potential energy: $u(x)\psi(x) = -\kappa \psi(x)$. We have an eigenvalue system. We can now define a force such that the eigenvalue solutions correspond to the mass evolution associated with various points on the velocity field. 
+
+\[\vec F(x) = -\nabla u = - \frac{d}{dx} u (x) = - \kappa \frac{d}{dx}\psi(x)\] \\ 
+We can extend this idea to solve for 1D cases where the system is time-dependent. Trivially, we can say that the solution sets are of the form $\Psi(x,t) = \psi(x)\phi(t).$ 
+\begin{align}
+\phi(t) = \sum_{i} \phi_{i}(t_{i}) \implies \vec u (x,t) = X(x)T(t)\end{align}
+We know how to solve these systems. We will discuss classes of solution sets later. 
+
+\subsubsection {Case II}
+\textbf{\[\text{Let } \mathbb{V} := \{\vec u := \Psi (\vec x,t)\;|\;\forall \,\vec u \in \mathbb{R}^{2 \times 1} \}\;\;\;,\;\;\; \vec f \ne \vec 0 \]}
+\[
+\rho \left( \frac{\partial \vec{u}}{\partial t} + \vec{u} \cdot \langle \frac{\partial \vec u}{\partial x_1}, \frac{\partial \vec u}{\partial x_2} \rangle \right) = 
+-\langle \frac{\partial p}{\partial x_1}, \frac{\partial p}{\partial x_2} \rangle 
++ \mu \left( \frac{\partial^2}{\partial x_1^2} + \frac{\partial^2}{\partial x_2^2} \right) \vec{u} + \vec{f}.
+\]
+
+\[
+ \langle u_{1}, u_{2} \rangle \cdot \langle \frac{\partial \vec u}{\partial x_1}, \frac{\partial \vec u}{\partial x_2}  \rangle = \vec u \left(\frac{\partial \vec u }{\partial x_1} + \frac{\partial \vec u }{\partial x_2}\right) = \vec 0 \;\;\;;\;\;\; u_{i} \frac{\partial \vec u}{\partial x_{j}} = 0 \text{ for } i \ne j
+\]
+
+\[
+\implies \rho \frac{\partial \vec{u}}{\partial t} = -\langle \frac{\partial}{\partial x_1}, \frac{\partial}{\partial x_2} \rangle p + \vec{f}.
+\]\\
+The solution set for this simpler equation is easy to discern:
+
+\[
+d \vec u = \frac{1}{\rho} (-\nabla p + \vec f)\, dt \implies \int_{u_{0}}^{\vec u} d \vec u' = \frac{1}{\rho} \int_{0}^{t} (-\nabla p + \vec f)\, dt'
+\]
+\begin{align}
+    \therefore \vec u - u_{0} = \frac{1}{\rho}\left(- t \nabla p + m_{i}\vec p\right) 
+\end{align}
+
+The important pattern we want to emphasize at this point of the discussion is how the solutions for each of these cases navigates clever ways to deal with the nonlinear terms, whether it be by enforcing the continuity constraints in case II or treating it as a scalar potential in case I. 
+
+\section{Proof}
+
+\subsection{Motivating the proof}
+We will use this trend in reduction of nonlinear terms to simpler problems to motivate our examination of the 3D system of PDEs. 
+
+\subsubsection {Case III}
+\textbf{\[\text{ Let } \mathbb{V} := \{\vec u := \Psi (\vec x,t)\;|\;\forall \,\vec u \in \mathbb{R}^{3 \times 1} \}\;\;\;,\;\;\; \vec f := \vec 0 \]}
+
+\[
+\left( \frac{\partial \vec{u}}{\partial t} + \vec{u} \cdot \langle \frac{\partial}{\partial x_1}, \frac{\partial}{\partial x_2}, \frac{\partial}{\partial x_{3}} \rangle \right) \rho = 
+-\langle \frac{\partial}{\partial x_1}, \frac{\partial}{\partial x_2}, \frac{\partial}{\partial x_{3}} \rangle p + 
+\mu \left( \frac{\partial^2}{\partial x_1^2} + \frac{\partial^2}{\partial x_2^2} + \frac{\partial^{2}}{\partial x_{3}^{2}}\right) \vec{u} + 
+\vec{f},
+\]
+
+\[\quad \langle \frac{\partial }{\partial x_1}, \frac{\partial}{\partial x_2}, \frac{\partial}{\partial x_3} \rangle \cdot \langle u_{1}, u_{2}, u_{3}\rangle = 0 \]
+
+\begin{align*}
+\implies \begin{cases}
+    \vec u \left( \frac{\partial u_{1}}{\partial x_1} + \frac{\partial u_{2}}{\partial x_2} + \frac{\partial u_{3}}{\partial x_3}  \right) = 0 \;\;\;;&
+    \left( \frac{\partial^{2} u_{1}}{\partial x_1^{2}} + \frac{\partial^{2} u_{2}}{\partial x_2^{2}} + \frac{\partial^{2} u_{3}}{\partial x_3^{2}} \right) = 0 
+\end{cases}    
+\end{align*}
+
+\[\implies \rho \frac{\partial \vec u }{\partial t} = -\langle \frac{\partial}{\partial x_1}, \frac{\partial}{\partial x_2}, \frac{\partial}{\partial x_{3}} \rangle p + \vec f\]
+
+\[
+\implies \rho \frac{\partial \vec{u}}{\partial t} = -\rho \frac{d\vec x}{dt} + m \frac{d^{2}\vec x}{dt^{2}}
+\] \\ Both cases can be written down as follows: 
+
+\[*
+\implies \rho \frac{\partial u_{i}}{\partial t} = -\frac{\partial p}{\partial x_{i}} + f_{i} = -\frac{\partial p}{\partial x_{i}} + m \frac{\partial^{2} x_{i}}{\partial t^{2}}
+\] \\
+For simplicity, we will first examine the case where $\vec f := \vec 0$.
+
+\[
+\rho \frac{\partial u_{i}}{\partial t} = -\frac{\partial p}{\partial x_{i}} \implies \frac{dx_{i}}{d t} du_{i} = -\frac{1}{\rho} dp
+\]
+
+\[
+\implies \int_{u_{0}}^{\vec u} u_{i} \, du_{i} = -\frac{1}{\rho} \int_{p_0}^{p} dp'
+\]
+\begin{align}
+    \therefore u = \sqrt{u_{0}^{2} - \frac{t_{0}}{\rho} p }
+\end{align}
+
+We can conclude that in this simplified case, the solution velocity amplitudes correspond to a root-squared difference from starting velocity amplitude to the critical velocity of the medium. Now, let's examine the case where $\vec f := \vec f(\vec x, t)$, and normalized constants for simplicity. 
+
+\[
+* \frac{\partial u_{i}}{\partial t} = -\frac{\partial p}{\partial x_{i}} + f_{i} = -\frac{\partial p}{\partial x_{i}} + \frac{\partial^{2} x_{i}}{\partial t^{2}}
+\] \\ 
+We notice that the equation now resembles an inhomogeneous reaction-diffusion equation of the form $u_{t} - u_{xx} = p(x)$. We will discuss the solution sets for these types of equations further down. We can examine these cases analytically and get well-behaved vector fields. We also know when these conditions create transcendental solutions, particular solutions and general solutions.
+\begin{align}
+ \dot{u_{i}}(t) = -\dot{p_{i}}(x) + \ddot{x_{i}}(t) \implies \dot p_{i}(x) = \ddot{x_{i}}(t) - \dot{u_{i}}(t) = k \ddot x_{i}(t)
+\end{align}
+We want to note that in each of these simplifications to the problem, we have created an equivalent projection of the pressure gradient onto the acceleration terms. As per Poisson's equation, we could choose either acceleration terms as the basis of our projection. 
+
+\subsubsection{Motivating the fundamental energy indentity}
+We will choose the convex acceleration term as we want to understand its formulation as the potential more. 
+
+\[\text{Poisson-pressure equation: }\nabla^{2}\varphi(\vec r) = f (\vec r) = (\vec u \cdot \nabla )\vec v + \nabla p\]
+ 
+\[\text{Laplace's equation: }\nabla^{2}\varphi(\vec r) = 0\] \\ 
+We will see that our projection bases can be understood in terms of bilinear mapping and solved using Green's functions defined using norms on reference frames, delta functions and the residue theorem.
+
+\[\text{Green's function: } G(\vec r) := - \iiint \frac{f(\vec r ')}{4\pi \|\vec r - \vec r'\|}\, d^{3} r' \;\;,\; \forall \vec r \subseteq \mathbb{R}^{n}\] \\
+Biot–Savart’s law is a related concept in both fluid dynamics and electromagnetism. For example, in fluid dynamics the velocity field induced by a vorticity distribution \( \vec{\omega}(\vec r') \) is given by
+\[
+\vec{u}(\vec r) = \frac{1}{4\pi} \int \frac{\vec{\omega}(\vec r') \times (\vec{r}-\vec{r}')}{\|\vec{r}-\vec{r}'\|^3}\, d^3r',
+\] \\ 
+which uses a kernel derived from the gradient of the Green's function for the Laplacian. Here, while the Green’s function integral represents the potential due to a scalar source \(f\), Biot–Savart’s law relates a vector source (vorticity or current) to its induced vector field (velocity or magnetic field). Both formulations rely on the same fundamental solution \(1/(4\pi \|\vec r-\vec r'\|)\), but they differ in that Biot–Savart's law incorporates a cross product and an extra power in the denominator to properly capture the directional (rotational) effects of the source distribution. \\ \\ 
+These resultant vector fields and their curls are commonplace in both fluid dynamics and electromagnetism textbooks and papers, and are not hard to find. The afore-linked papers also contain many of them. For our purposes, we are motivated by these results to apply the Green's function to our Poisson-pressure equation to derive the fundamental energy identity. \\
+
+\[ = - \iiint \frac{[(\vec u \cdot \nabla) \vec u + \nabla p]}{4 \pi \|\vec r - \vec r '\|} \, d^{3} r' = - \iint \frac{(\vec u \cdot \nabla ) \vec u }{4\pi \gamma} \,d^{2} \vec r - \iiint \frac{\nabla p (\vec r')}{4\pi \gamma} \,d^{3} r'\]
+
+\[\implies \varphi(\vec r) = -\int \frac{\rho(\vec r')}{4\pi \gamma} \;d^{3}\vec r' \implies \rho(\vec r ') := \|(\vec u \cdot \nabla) \vec u\| \frac{1}{d r'} - \nabla p(\vec r')\]
+
+\[\implies \rho(\vec r') \,dr' = \|(\vec u \cdot \nabla)\vec u\| + \nabla p (\vec r') \,dr'\]
+
+\[\implies \frac{1}{2}\frac{d}{dt} \|\vec u\|^{2} = -\mu \|\nabla^{2}\vec u\|^{2} - \int_{\mathbb{R}^{3}} \langle (\vec u \cdot \nabla)\vec u, \vec u\rangle \, dx - \int_{\mathbb{R}^{3}} \langle \nabla p, \vec u \rangle\, dx\]
+
+\[\therefore \frac{1}{2}\frac{d}{dt} \|\vec u\|^{2} = -\mu \|\nabla^{2} \vec u\| - \int_{\mathbb{R}^{3}}\langle \rho, \vec u \rangle\,dx\]
+
+\begin{remark}
+    These results demonstrate that the fundamental energy identity naturally emerges from applying Green’s function techniques to the Poisson-pressure equation. By linking the acceleration term and pressure gradient to an effective source term $\rho(\vec r')$, we recover an expression that governs the temporal evolution of kinetic energy.
+\end{remark}
+
+\subsection{Understanding bilinear mappings and projections}
+% With elementary rearrangement, the time-derivative of $\vec{u}$ can be rewritten as a composite mapping of the diffusion equation and a bilinear mapping: 
+% \[\rho \,\partial_{t}\vec{u} = \mu\nabla^{2}\vec{u} + \bar{B}(\vec{u},\vec{u} )\]
+% such that 
+% \[\bar{B}(\vec{u}, \vec{u}) := \rho(\vec{u}\cdot\nabla)\vec{u} - \nabla p\]
+% where ${B}$ is a certain bilinear operator on divergence-free vector fields (specifically,
+% \[B(\vec u, \vec v) = -\frac{1}{2} \mathbb{P}((\vec u \cdot\nabla)\vec v + (\vec v \cdot \nabla) \vec u )\]
+
+% Important feature of the bilinear operator: 
+
+% \[\langle B (\vec u, \vec u), \vec u \rangle = 0 \implies \langle \bar B, \vec u \rangle = \int_{X} \bar B \vec u \,d\mu = 0\]
+% We get this result by using the $L^{2}$ inner product on divergence-free vector fields, leading to the fundamental energy identity.
+
+% \[\frac{1}{2} \int_{\mathbb{R}^{3}} \|\vec u (T, \vec x)\|^{2} \,dx + \int_{0}^{T} \int_{\mathbb{R}^{3}} \|\nabla^{2} \vec u (t, \vec x)\|^{2} \,dx\,dt = \frac{1}{2} \int_{\mathbb{R}^{3}} \|\vec u (0, \vec x)\|^{2}\]
+
+% Notice how we obtain the following identity: 
+
+% \[ \frac{1}{2} \int_{\mathbb{R}^{3}} \|\vec u(T, \vec x)\|^{2} := \int_{\mathbb{R}^{3}} \langle \rho, \vec u\rangle \,dx \implies \vec u (T, \vec x) = \sqrt{2\rho(\vec r')}\,d\vec x\]
+
+% We now have a velocity condition at time $T$ which describes a vector field. Its evolution can be parameterized in the form of the reference displacement density, which could consist of convergent and transient terms.
+
+\begin{definition} Bilinear maps. \\ 
+Let \(\vec{u} := \vec{u}(t,\vec{x})\) be a smooth, divergence-free vector field on \(\mathbb{R}^3\) satisfying
+
+  \[
+  \rho\, \partial_{t}\vec{u} = \mu \nabla^2 \vec{u} + \overline{B}(\vec{u}, \vec{u}),
+  \]
+  
+  where the composite nonlinear term is given by
+  
+  \[
+  \overline{B}(\vec{u}, \vec{u}) := \rho (\vec{u}\cdot\nabla)\vec{u} - \nabla p,
+  \]
+  
+  and the bilinear operator \(B\) on divergence-free vector fields is defined by
+  
+  \[
+  B(\vec{u}, \vec{v}) = -\frac{1}{2} \mathbb{P}\Bigl((\vec{u}\cdot\nabla)\vec{v} + (\vec{v}\cdot\nabla)\vec{u}\Bigr),
+  \]
+  
+  with the key property that
+  
+  \[
+  \langle B(\vec{u}, \vec{u}), \vec{u} \rangle = 0,
+  \]
+  
+  where \(\langle \cdot, \cdot \rangle\) denotes the \(L^2\) inner product on divergence-free vector fields. \\    
+\end{definition}
+
+\begin{lemma}[Energy Identity and Smooth Evolution]
+
+  The following energy identity holds for $\vec u (t, \vec x)$:
+  \[
+  \frac{1}{2} \int_{\mathbb{R}^3} \|\vec{u}(T,\vec{x})\|^2 \,d\vec{x} + \int_{0}^{T}\int_{\mathbb{R}^3} \|\nabla^2 \vec{u}(t,\vec{x})\|^2 \,d\vec{x}\,dt = \frac{1}{2} \int_{\mathbb{R}^3} \|\vec{u}(0,\vec{x})\|^2 .
+  \] \\ 
+  Moreover, identifying the energy at time \(T\) with a density pairing,
+    
+    \[ \frac{1}{2} \int_{\mathbb{R}^{3}} \|\vec u(T, \vec x)\|^{2} := \int_{\mathbb{R}^{3}} \langle \rho, \vec u\rangle \,dx \implies \vec u (T, \vec x) = \sqrt{2\rho(\vec r')}\,d\vec x\] \\ 
+  which, upon parameterization in terms of a reference displacement density (incorporating both convergent and transient terms), implies that the velocity field evolves smoothly in time.
+
+  \[\eta + \int_{0}^{T} \int_{\mathbb{R}^{3}} \|\nabla^{2} \vec u (t, \vec x)\|^{2} \,dx\,dt = \frac{1}{2} \int_{\mathbb{R}^{3}} \|\vec u (0, \vec x)\|^{2}.\]
+\end{lemma} 
+\quad 
+\begin{remark}
+  The key feature of the result is as follows: 
+  
+  \[
+  T := T(t, \vec x) := T(\vec x) \;\;\; ; \;\;\; T \in \mathbb{R}^{3}\times \mathbb{R} \mapsto \mathbf{L}^{3} \left[ 0, \infty \right)
+  \]
+  
+  The property underlying this result is that the kinetic energy of the gradient field does not depend on its time evolution and can be smoothly defined in $\mathbb{R}^{3}$. Here, we note the role of the $L^{2}$ inner product 
+  
+  \[
+  \langle B(\vec{u},\vec{u}),\vec{u}\rangle = 0,
+  \]
+  
+  which ensures that the nonlinear convective term does not contribute to the \(L^2\)-energy balance. This cancellation, together with the diffusion term, yields the fundamental energy identity. In physical terms, even though the velocity field may develop complex structures (such as vortices), its evolution is controlled in such a way that the total kinetic energy decays smoothly, and the terminal state can be related directly to the density \(\rho\) in a well–behaved manner. \\
+
+  Furthermore, we can motivate a discussion of the following statement: 
+
+  \[
+  T := T(t, \vec x) := T(\vec x) \;\;\; ; \;\;\; T \in \mathbb{R}^{k}\times \mathbb{R} \mapsto \mathbf{L}^{k} \left[ 0, \infty \right) \;;\; k \in \mathbb{Z}
+  \]
+\end{remark}
+
+\begin{remark} The Rankine Vortex \\ \\ 
+    For an arbitrary closed circuit \( \mathcal{C} \) in a fluid flow, the circulation \( \Gamma \) is defined as
+    \[
+    \Gamma = \oint_{\mathcal{C}} \vec{u} \cdot d\vec{s}.
+    \]
+    The circulation is related to the vorticity by Stokes' theorem
+    \[
+    \oint_{\mathcal{C}} \vec{u} \cdot d\vec{s} = \iint (\nabla \times \vec{u}) \cdot d\mathcal{S} = \iint \vec{\omega} \cdot d\mathcal{S}.
+    \]
+    There must be vorticity within a loop round which circulation occurs. The existence of closed streamlines in a flow pattern implies that there are loops for which \( \Gamma \neq 0 \) and thus that the flow is not irrotational everywhere. However, the converse may not apply. This relationship has important implications for the fundamental energy identity of a vortex field.
+
+    \begin{corollary} Let $\delta_{i} : \hat X \mapsto X - X_{i} \;;\; \forall \, i \in \mathcal{K}$. \\
+    Integrating the vorticity equation over $\mathbb{R}^3$  leads—under appropriate boundary conditions—to an energy identity for the vorticity. In particular, one can show that:
+    \[
+    \frac{1}{2} \int_{\mathbb{R}} \|{\omega}_{i}(T, \theta_{i})\|^{2}\,d \theta_{i} + \int_{0}^{T} \int_{\mathbb{R}^{3}} \|\partial_{\theta_{i}}{\omega}_{i}(t,\theta_{i})\|^{2}\,d\theta_{i}\,dt = \frac{1}{2} \int_{\mathbb{R}} \|{\omega}_{i}(0,\theta_{i})\|^{2} . 
+    \] 
+    We define a delta function $(\delta_{i \hat x})$ which computes the net vorticity at a given orientation. 
+    \[
+     \frac{1}{2} \int_{\mathcal{K}} \|\vec \omega (0, x_{i})\|^{2} = \frac{1}{2} \int_{\mathcal{K}} \|\vec \omega (T, x_{i})\|^{2} \delta_{i} (x - x_{i}) + \int_{0}^{T} \int_{\mathcal{K}} \|\vec \omega (t, x_{i})\|^{2} \delta_{i} (x - x_{i}) \, dt 
+    \]
+    Finally, we get an oriented planar vortex which follows the energy identity given below: 
+    \[
+    \eta' + \int_{0}^{T} \int_{\mathbb{R}} \|\vec \omega (t, \vec x)\|^{2} \delta x_{i} \, dt = \frac{1}{2} \int_{\mathcal{K}} \|\vec \omega (0, x_{i})\|^{2}. 
+    \]
+    \end{corollary}     
+
+    This corollary highlights the conservation and dissipation properties of vorticity in an oriented vortex field. In particular, by integrating the vorticity equation over the spatial and orientation domains, we obtain an energy identity that not only tracks the total vorticity energy over time but also incorporates the directional dependence through the delta function \(\delta_i\). This function effectively "selects" the net vorticity corresponding to a given orientation \(x_i\) and ensures that the energy contributions are properly weighted. In essence, the identity demonstrates that the initial vorticity energy is either preserved or dissipated over time, and any change in the net vorticity is accounted for by the integrated viscous dissipation term. Thus, even as the vortex evolves and its structure may become complex, the oriented planar vortex maintains a well-defined energy balance, reinforcing the physical significance of the energy identity in characterizing vortex dynamics. \\ \\ 
+    We want to note that this lemma and consequent corollary are already sufficient in showing the global regularity of the Navier Stokes equation, as posed in Statement (1) in our discussion earlier. We recall that our goal is to show that the vector field exists smoothly. Tao makes reference to \href{https://terrytao.wordpress.com/2007/03/18/why-global-regularity-for-navier-stokes-is-hard/}{an earlier blog} where he describes the challenges in proving (or disproving) the global regularity of the Navier Stokes Equation. Here, he poses, "A comparison principle argument, dominating the solution by another object which blows up in finite time, taking the solution with it; is one or more of a set of sufficient ingredients a rigorous finite time blowup result [would entail]." A comparison principle argument is precisely what we have with our fundamental energy identities. 
+\end{remark} 
+
+We also see Tao's emphasis on proving the boundedness of the bilinear operation. This would necessitate a complete admission of an exact, or analytical finite time blowup result. We will describe more of the map $B$ follows to show convergence. \\\\
+ Let $\mathbb{B} : X,Y \mapsto x\cdot Ay$
+\[\implies -\rho(\vec u \cdot \nabla) \vec u + \nabla p = \vec f_{1} \in \mathbb{B}\]
+
+Symmetric bilinear forms: 
+\begin{itemize}
+    \item $B (\vec u, \vec v) = B (\vec v, \vec u) \;\;\;;\;\;\;\forall \, \vec u, \vec v \in \mathbb{V}$ 
+    \item $B (\vec u + \vec v, \vec w) = B (\vec u, \vec w) + B (\vec v, \vec w) \;\;\;;\;\;\; \forall \, \vec u, \vec v, \vec w \in \mathbb{V} $ 
+    \item $B (\lambda \vec u, \vec w) = \lambda B (\vec u, \vec w) \;\;\;;\;\;\; \forall \, \lambda \in K, \forall \, \vec u, \vec w \in \mathbb{V} $ \\ 
+\end{itemize} 
+
+We introduce a projection operator $\mathbb{P}(\vec u)$ that operates on our bilinear map, known as a Leray projection. The projection reduces our bilinear map into an eigenvalue problem, where the gradient of the scalar pressure field is projected onto the convex acceleration term. 
+
+\[\bar B(\vec u, \vec v) = -\frac{1}{2} \mathbb{P}(2 \vec u \cdot\nabla\vec u ) = - \mathbb{P}(\vec u \cdot \nabla \vec u)\]
+
+\[\implies \rho(\vec{u}\cdot\nabla)\vec{u} + \nabla p = - \mathbb{P} (\vec u \cdot \nabla \vec u)\]
+
+\[\implies \nabla p = - (1 - \mathbb{P}) \vec u \cdot \nabla \vec u = -\kappa \vec u \cdot \nabla \vec u \]
+
+\[\therefore \bar B (\vec u, \vec u) = (1-\kappa) \vec u \cdot \nabla \vec u \] 
+
+\textbf{What is a Leray Projection? }
+\[\mathbb{P} (\vec u) = \vec u - \nabla (\nabla^{2})^{-1} (\nabla \cdot \vec u)\] 
+The Leray Projection is a \textit{pseudo-differential operator}. \\ 
+
+\textit{Psudeo-differential operators: } Pseudodifferential operators extend differential operators by working in Fourier space with more general symbols, enabling the analysis and solution of a broader class of problems.\\ 
+\[P(\xi) \hat u(\xi) = \hat f (\xi) \implies \hat u (\xi) = \frac{1}{P(\xi)} \hat f (\xi)\;\;\;;\;\;\; \mathbf{0} \in P(\xi); \xi \in \mathbb{R}^{n} \]
+
+\[\implies \vec u (x) = \frac{1}{(2\pi)^{n}} \int e^{i\omega\xi} \frac{1}{P(\xi)} \hat f (\xi) \;d\xi\] 
+
+\[\therefore P(x,D) \vec u (x) = \frac{1}{(2\pi)^{n}} \int_{\mathbb{R}^{n}} e^{i\omega\xi} P(x, \xi) \hat u (\xi) \;d\xi \; ;\] 
+where a pseudodifferential operator $P(x,D)$ belongs to a class $S^{m}_{\rho, \delta}$ if its symbol $P(x, \xi)$ satisfies the following condition: 
+
+\[
+P(x, \xi) \in S^{m}_{\rho, \delta} (\mathbb{R}^{n} \times \mathbb{R}^{n}) \;; 
+\]
+where $m \in \mathbb{R}$ is the order of the operator, controlling the growth of $P(x,\xi)$ as $\|\xi\| \to \infty$; and $\rho$ and $\delta$ are parameters in $[0,1]$ that control the trade-off between the regularity of $P(x,\xi)$ in $x$ and its decay in $\xi$.\\
+
+\textit{Convergence statement: } The symbol $P(x,\xi)$ must satisfy estimates of the form:
+
+\[\|\partial_{\xi}^{\alpha} \partial_{x}^{\beta} P(x,\xi)\| \le \mathbf{C}_{\alpha,\beta} (1+\|\xi\|)^{m-\rho \|\beta| - \delta\|\alpha\|} \;\;;\;\; \mathbf{C}\in\mathbb{R}\] 
+
+; for all multi-indices $\alpha, \beta$, where $\textbf{C}_{\alpha, \beta}$ are constants. \\ 
+
+Projection operator described for our case is as follows: 
+\[m(\xi)_{kj} = \delta_{kj} - \frac{\xi_{k}\xi_{j}}{\|\xi\|^{2}} \;\;\;;\;\;\; 1 \le k,j \le n\]
+\[\therefore \mathbb{P}(\vec u)_{k}(x) = \frac{1}{(2\pi)^{n}} \int_{\mathbb{R}^{n}} \left(\delta_{kj} - \frac{\xi_{k}\xi_{j}}{\|\xi\|^{2}}\right) \hat u_{j} (\xi) e^{i\xi\cdot x} \;d\xi\] \\ 
+We want to show that the bilinear operation converges to some eigenfunction decomposition problem. 
+\[\bar B (\vec u, \vec u) = (1-\kappa) \vec u \cdot \nabla \vec u \]
+\[\therefore \bar B (\vec u, \vec u) = (1-\kappa) \vec f_{1} (\vec u, \vec u)\] \\
+This is an eigenvalue equation that preserves dimensional orientation. Furthermore, we wish to assert the following: 
+
+\[\kappa = \sqrt{2\rho (r_{i})} \, dx_{i} = \sqrt{2\rho} \, dx_{i}\]
+
+\subsection{Rewritting the equation}
+An alternate way of viewing this question is as follows: Is $(\vec u \cdot \nabla) \vec u = \vec u \cdot \nabla \vec u$? \\
+
+Let:
+\[
+\vec{u} = \langle f_1, \ldots, f_u \rangle, \quad \nabla = \left\langle \frac{\partial}{\partial x_1}, \ldots, \frac{\partial}{\partial x_n} \right\rangle
+\] \\
+\[
+\nabla \vec{u} = \left\langle \frac{\partial f_1}{\partial x_1}, \ldots, \frac{\partial f_n}{\partial x_n} \right\rangle = \langle f_{1x_{1}}, \ldots, f_{nx_{n}} \rangle = \vec f_{\vec x}
+\] \\ 
+\[
+\nabla \cdot \vec{u} = \frac{\partial f_1}{\partial x_1} + \cdots + \frac{\partial f_n}{\partial x_n} = \sum_{i=1}^u \frac{\partial f_i}{\partial x_i} = \sum_{i=1}^u f_{ix_{i}}.
+\] \\ 
+\[ \implies 
+\vec{u} \cdot \nabla \vec{u} = \langle f_1, \ldots, f_n \rangle \cdot \left\langle \frac{\partial f_1}{\partial x_1}, \ldots, \frac{\partial f_n}{\partial x_n} \right\rangle
+\]
+\[
+= f_1 \frac{\partial f_1}{\partial x_1} + \cdots + f_n \frac{\partial f_n}{\partial x_n}.
+\]
+The projection is given by:
+\[
+f_1 \frac{\partial f_1}{\partial x_1}, \ldots, f_n \frac{\partial f_n}{\partial x_n} = \vec f \cdot \vec f_{\vec x}.
+\]
+On the other hand, we have:
+\[
+(\nabla \cdot \vec{u}) \vec{u} = \sum_{i=1}^n \frac{\partial f_i}{\partial x_i} \langle f_1, \ldots, f_n \rangle = \vec f \,\sum_{i=1}^n f_{i x_i}.
+\]
+\((\nabla \cdot \vec{u}) \vec{u} = \vec{u} \cdot \nabla \vec{u}\) when:
+\[
+\vec f_{\vec x} = \sum_{i=1}^n f_{ix_i}.
+\]
+
+This is trivially true for \(i = 1\):
+\[
+\text{Let: } \vec f_{\vec x} = \sum_{i=1}^1 f_ix_i = f_x
+\]
+
+Examining the 3D case:
+\[
+\vec f_{\vec x} = \sum_{i=1}^{1} f_{ix_{i}} + \sum_{j=1}^{1} f_{jx_{j}} + \sum_{k=1}^{1} f_{kx_{k}} = \sum_{\alpha = 1}^{3} f_{\alpha x_{\alpha}}\;\;\;;\; \alpha = \mathbb{P}(Dim(\vec x)) = \mathbb{P}\{\hat i,\hat j,\hat k\}
+\]
+\[\implies
+\vec f \cdot \vec f_{\vec x} = \vec f \, \sum_{\alpha=1}^{3} f_{\alpha x_{\alpha}}
+\] \\ 
+We have shown that in 3D, $(\vec u \cdot \nabla) \vec u = \vec u \cdot \nabla \vec u$ is true, and that the projection corresponds to scaling a vector by a quaternion, where the corresponding scalars are solutions to an eigenvalue problem. In our reformulation, we can think of $\kappa$ as an eigenvalue operator that returns the corresponding eigenvalue for a component in the vector $\vec u$ rather than a scalar.\\
+
+The navier stokes equation can now be rewritten as follows: 
+\[ 
+\rho \,\partial_{t}\vec{u} = \mu\nabla^{2}\vec{u} + \bar{B}(\vec{u},\vec{u} ) = \mu \nabla^{2} \vec u + \frac{1}{\kappa}\vec u 
+\]  
+
+\subsection{Dealing with singularities}
+We have rewritten our bilinear potential as an eigenvalue problem that corresponds to a scalar quaternion operating on a vector field, where the quaternion eigenvalue gives the inverse of the mass associated with the potential. 
+
+\[\rho \partial_{t} \vec u = \mu \partial_{\vec x_{ij}}^{2} \vec u + \frac{1}{\kappa} \vec u 
+\implies \kappa := m^{-1}\]
+
+We want to ensure that the mass element of the potential $\varphi(\vec g, \vec r) = m(\vec g \cdot \vec r)$ is bounded: 
+
+\[ \implies \kappa = \frac{(\vec g \cdot \vec r)}{\varphi(\vec g, \vec r)} = \frac{\vec g \cdot \vec r}{ \|\vec g \cdot \vec r\|} \le \frac{\vec g \cdot \vec r}{\|\vec g\| \cdot \|\vec r\|} = \cos{\phi} = \langle \cdot, \cdot\rangle : \mathbb{V} \times \mathbb{V} \mapsto \mathbf{F}\]
+
+Notice that this $\kappa$ resembles the definition of the inner-product space. Let us examine its limiting property:
+
+\[ \implies \lim_{\varphi(\vec g, \vec r) \to 0} \kappa (\vec g, \vec r) = \lim_{h \to 0} \cos{\frac{1}{h}} = \cos{ \lim_{h \to 0} \frac{1}{h}} = (\pm 1)^{n} \|\varepsilon\| \lim_{h\to0} \frac{1}{h}\]
+
+\[\text{Equivalently: }\; (\pm 1)^{n} \|\varepsilon\| \lim_{h\to0} \frac{1}{h} = \sin{h} \lim_{h\to0} \frac{1}{h} = \lim_{h\to0} \frac{\sin{h}}{h} = \lim_{h \to 0} \text{ sinc }{h}\]
+
+This problem with bounding the eigenstates of mass motivates us to introduce the Residue theorem as a definition, and then try to extend it a little further. 
+
+\begin{definition}
+    Residue theorem for $n^{th}$-order singularities in a complex function.
+    \begin{align} \oint_{\gamma} \frac{1}{z} \, dz = 2\pi i\cdot z_{0}\,; \;\;\;\text{$z_{0}:=$ Residues of $f(z)\in \gamma$}\end{align}
+
+To examine the residue at a given point $z_{0}$, we need to first examine the broader family of objects that it comes from, i.e. the Laurent series. We define a holomorphic function $f: D \mapsto \mathbb{C}$. 
+\begin{align}f(z) := \sum_{k=-\infty}^{\infty} a_{k} (z - z_{0})^{k} \;\text{ with isolated singularities: } \end{align}
+
+\begin{align} z_{0} = \frac{1}{(n-1)!} \lim_{z\to z_{0}} \frac{d^{(n-1)}}{dz^{(n-1)}} [(z-z_{0})^{n}f(z)] \end{align}
+
+\begin{align} \text{Res}(f,c) := \frac{1}{2\pi i} \oint_{\partial B_{\varepsilon}(z_{0})} f(z) \, dz \end{align}
+
+Written alternately, we have Cauchy's Theorem as follows: We have an open domain $ D \subseteq \mathbb{C}$, where we define a holomorphic map $f: D \mapsto \mathbb{C}$ | $z_{1}, \dots, z_{n} \in f, \gamma:[a,b] \mapsto D$ closed curve with Int$(\gamma) \subseteq D \, \cup \, \{z_{1}, \dots, z_{n}\}$. Then: 
+
+\[\oint_{\gamma_{j}} f(z) \, dz = 2\pi i \cdot \text{Res}(f,c) \cdot \text{wind}(\gamma, z_{j}) = 2 \eta(j) \pi \cdot z_{0} \hat i\]
+
+Generalizing to a homogeneous case, we get the following integral equation, which we call Cauchy's Theorem: We have a $\tilde D \subseteq \mathbb{C}$ open disc | $D = \tilde D \, \setminus \, \{z_{1}, \dots, z_{n}\}$. Then: 
+
+\[\oint_{\tilde{\gamma}} f(z)\, dz = 0. \]
+\end{definition}
+
+\begin{example} Using the Residue theorem to evaluate a singular point in a complex function.
+\[\psi(x) = A\frac{\sin{x}}{x} \implies |A|^{2}\int_{-\infty}^{\infty} dx\,\left(\frac{\sin{x}}{x}\right)^{2} = 1\]
+\[\text{Let: sinc }x = \frac{\sin{x}}{x},\;\;\; f(x) = \text{sinc}^{2} x = \begin{cases}
+    1; & x = 0 \;\;\because \text{L'Hopital's rule} \\ 
+    \frac{\sin^{2}{x}}{x^{2}}; & x \ne 0
+\end{cases}\]
+\[\implies |A|^{2} \int_{-\infty}^{\infty} dx\, \text{sinc}^{2}x = |A|^{2} \int_{-\infty}^{\infty} dx\, \left(\frac{e^{ix} - e^{-ix}}{2ix}\right)^{2} = 1  \] 
+
+\[\implies -\frac{|A|^{2}}{4} \lim_{\epsilon\to0}\int_{-\infty}^{\infty} dx\, \frac{e^{2ix} + e^{-2ix}-2}{(x-i\epsilon)^{2}} = 1\;; \;\;\;\frac{1}{x^{2}}\text{ is a singularity}\]
+\[\implies -\frac{|A|^{2}}{2}\pi i \,\lim_{\epsilon\to0} \,\lim_{z\to i\epsilon} \frac{d}{dz} (e^{2iz} - 2) = 1\;\;\;\because \text{Theorem 3.3}\]
+
+\[\implies |A|^{2}\pi\,\lim_{\epsilon\to0} e^{-2\epsilon} = 1\]
+\[\therefore \exists\, \Psi(x) = \psi(x),\,\forall\,x\in\mathbb{R} \;\;\; \because A = \frac{1}{\sqrt{\pi}}\]
+\[\therefore \psi(x) = \frac{\sin{x}}{\sqrt{\pi} x} \;\;\;;\;\;\; \psi(0) = \frac{1}{\sqrt{\pi}} \]
+\end{example}
+
+The “rotation” is entirely captured by the complex scalar $i$. However, in higher-dimensional systems the notion of “winding” isn’t confined to a single plane—rotations can occur in multiple independent planes. This means that instead of a single scalar like $i$, the rotational behavior is more naturally encoded in objects like bivectors (or elements of a Clifford algebra) that represent rotations in specific two-dimensional subspaces. In the complex plane the presence of a singular point such as \( z_{0} \) can create a vortex of magnitude \(2\pi\), scaled by the number \(i := \sqrt{-1}\) and an integer number of windings (with the direction given by the orthogonal unit vector \(\hat{i}\) for the windings). Here, we can draw a distinction between the number $i$ and the basis vector $\hat i$, which can often be confusing. The basis vector $\hat i$ tells us the direction of unit magnitude along which our vortex "winds," where as the complex number $i$ is a scalar on the number line itself. The reason to emphasize this distinction is simple. A quaternion can be divided by a nonzero quaternion, there is no division on vectors. (In general, there is no multiplication on vectors either.) \\ 
+
+A natural question is how this notion extends to higher dimensions. Will we be forced to deal with cross-terms such as $2\pi i \omega \, \hat{j}$? What would these terms mean physically? Thus, rather than ending up with “cross-terms” such as $2\pi i \omega \hat j$ in the naive sense, what happens is that the singularity can induce rotations in several orthogonal planes, each with its own quantized contribution. These terms would not simply be a scalar $i$ multiplied by a basis vector $\hat j$ (which would mix two different types of objects) but would be understood as different components of a more general rotational structure. Each component would represent a winding number associated with a specific $2$-plane in the $kD$ space. Physically, these multiple winding numbers imply that a singularity in higher dimensions can generate a more complex “vortex” structure, with rotations happening simultaneously in several orthogonal directions. Instead of a single vortex circulation, you might have several independent circulations, each corresponding to the geometry of a particular plane, or conic section, depending on how we choose the evolving stentil shape. This richer structure captures the full multi-dimensional character of the rotational field around the singularity. \\ 
+
+For example, in three-dimensional physics one often encounters expressions like
+\[
+f_{0} + x\,\hat{i} + y\,\hat{j} + z\,\hat{k} = 0,
+\]
+and it is natural to ask if one can develop a residue theorem for \(n\)th-order singular quaternion systems. Such a theorem would also address the geometric implications, including whether a wave function full of vorticies (or another measurable map) dissipates as it evolves through time, and if this dissipation is smooth and well-behaved. In particular, one may ask how a dissipating quaternion system, featuring three-dimensional rotations within vortices, should be interpreted.\\
+
+In the classical setting, Cauchy's integral formula exhibits several key properties:
+\begin{itemize}
+    \item The notion of winding number, which is intrinsically a two-dimensional concept.
+    \item Analyticity in a simply connected domain, so that any closed loop can be continuously contracted to a point.
+    \item If a singularity exists inside a loop, the contraction is prevented, and this “hole” in the domain is what permits the nonzero integral. Here, the winding number tracks the number of the convergence of a $2D$ vortex, where wind$(\gamma, a) := s(1) - s(0)$, where $(\rho, s)$ is the lifted path through the converging map defined as follows. 
+    \[
+    p: \mathbb{R}_{>0} \times \mathbb{R} \mapsto \mathbb{C} \mid \{a\}: (\rho_{0}, s_{0}) \mapsto a + \rho_{0} e^{i 2\pi s_{0}} 
+    \]
+\end{itemize}
+In higher dimensions, however, due to the extra degrees of freedom, any loop may still be contractible even in the presence of a singularity. By homotopy invariance, the line integral would vanish. Thus, the extension to higher dimensions involves integrating over higher-dimensional surfaces (or manifolds) which capture the topological nature of the singularity.\\ 
+
+Below is one schematic formulation of a residue theorem for \(n\)th–order quaternion singularities in a space such as \(\mathbb{R}\times\mathbb{R} \mapsto \mathbb{C}^k\) with \(k>2\).
+
+\begin{theorem}[Quaternionic Residue Theorem]
+  Let 
+  \[
+  U \subset \mathbb{R}_{>0}\times\mathbb{R} \quad \text{(or more generally } U\subset \mathbb{R}^m \text{ with } m>2\text{)}
+  \]
+  be an open, simply connected domain. Suppose that 
+  \[
+  f: U\to \mathbb{C}^k,\quad k>2,
+  \]
+  is quaternionic–analytic (in the sense of Fueter, for example) on \(U\setminus\{q_0\}\) and that \(f\) has an isolated singularity at \(q_0\in U\) of order \(n\); that is, in a (quaternionic) Laurent expansion about \(q_0\) we have
+  \[
+  f(q) = \sum_{j=-n}^{\infty} a_j\,(q-q_0)^j,
+  \]
+  with \(a_{-1}\) being the residue. Let \(\Sigma\) be a smooth, closed hypersurface (or cycle) in \(U\) which encloses \(q_0\) and is null–homologous in \(U\setminus\{q_0\}\). Then, with \(E(q,q_0)\) denoting the appropriate quaternionic Cauchy kernel and \(\omega_m\) the surface area of the unit sphere in \(\mathbb{R}^m\), one has
+  \[
+  \frac{1}{\omega_m} \int_{\Sigma} E(q,q_0)\, f(q) \, dS(q) = a_{-1} = \operatorname{Res}_{q_0}(f).
+  \]
+  In particular, if \(\Sigma\) does not enclose any particular singularity in a single orthogonal basis of \(f\) then the integral vanishes.
+  \[
+  \therefore \operatorname{Res}_{q_{0}} (f) := {\frac{2 \alpha \pi}{\omega_{m}}  \quad ; \quad \omega_{m}} := \mathcal{O}(q_{0}) \hat \alpha
+  \]
+\end{theorem}
+
+A few comments are in order:
+\begin{itemize}
+  \item In two dimensions the residue is directly linked to the winding number; in higher dimensions, the cycle \(\Sigma\) must be chosen so that it represents a nontrivial element of the homology group of \(U\setminus\{q_0\}\). (Note that in many higher–dimensional cases any loop can be contracted, but hypersurfaces “detect” the singularity via their non–trivial linking with it.)
+  \item The kernel \(E(q,q_0)\) is the quaternionic analogue of the complex Cauchy kernel \(\frac{1}{q-q_0}\) and is constructed so that its integral over a small sphere around \(q_0\) yields the normalization constant \(\omega_m\).
+  \item Geometrically, while in 2D the singularity produces a vortex with a quantized circulation (a multiple of \(2\pi\)), in higher dimensions the isolated quaternionic singularity creates a “defect” which is measured by the above integral. The extra dimensions allow cycles to “bypass” the singularity unless the cycle is chosen to capture the appropriate codimension of the singular set.
+  \item Concerning dissipation: if one thinks of the function \(f\) as, say, a wave function or a field evolving in time, then the presence of such a singularity may be interpreted as a localized source or sink. In many physical systems, the evolution away from the singularity is smooth and well–behaved, with dissipation (or dispersion) dictated by the analytic properties of \(f\) and the geometry of the domain. The residue (and the corresponding integral representation) provides a global constraint on the behavior of \(f\) even as it undergoes local dissipation.
+\end{itemize}
+
+\begin{remark}
+  In the above statement, note the following:
+  \begin{enumerate}[label=(\roman*)]
+      \item \textbf{Extension of the Winding Number.} In the complex plane the residue is tied to the winding number of a loop around an isolated singularity. In higher dimensions, since the fundamental group of a simply connected domain is trivial, one must rely on higher homology (or cohomology) groups. The closed oriented manifold \(\Sigma\) (often chosen as a sphere of appropriate dimension), defined as the mapping $\phi: \Sigma \mapsto S^{n-1} \in \mathbb{R}^{n}$, encodes the topological charge of the singularity. In particular, we have defined the notion of a winding number as the degree $\alpha$, which is a kernel that measures the net number of times $\Sigma$ "wraps" around the singularity, thereby encoding its topological charge. 
+      \item \textbf{Homotopy Invariance.} Although the classical winding number is a two-dimensional notion, the integral over \(\Sigma\) is homotopy invariant provided that \(\Sigma\) remains in the region where \(f\) is regular. Consequently, the value of the residue is independent of the precise choice of \(\Sigma\), as long as it encloses only the singularity \(q_0\).
+      \item \textbf{Quaternionic Poles and Vortex Structure.} An \(n\)th–order singularity (or pole) in the quaternionic setting may generate a more intricate vortex structure than in the complex plane. The direction and magnitude of this vortex are encoded in the noncommutative coefficients \(a_m\). Hence, the residue (and the full local expansion) carries both analytic and geometric information regarding the vortex.
+  \end{enumerate}
+\end{remark}
+
+The theorem above generalizes the spirit of Cauchy’s integral formula to a setting in which the function takes quaternion values and the underlying space has dimension greater than two. Although several technical details (such as the precise formulation of the differential form \(\omega\) and the choice of the integration manifold \(\Sigma\)) need to be addressed rigorously, the overall picture is that the residue remains a fundamental quantity capturing the analytic and topological features of the singularity.
+
+\vspace{1em}
+\noindent\textbf{Final Note on Weight Computation:}  
+In practical applications, the final weight computation is obtained from solving the global sparse matrix system, which arises from the collocation and interpolation procedures. These weights are crucial in reconstructing the solution (or the vortex structure) and ensuring that the resulting model accurately reflects the physical phenomena, such as the 3D rotational dynamics and any dissipative effects.
+
+
+\subsection{Eigenfunction decomposition of a nonlinear vector field}
+We are finally motivated to solve the system of PDEs as a series of bounded eigenfunction decompositions. What decompositions do we need to make and examine for boundedness and existence?\\\
+
+Chronology of \(\Lambda(t) \Psi{(\vec x)} \,-\, \)decomposition:
+The following steps outline a decomposition of the system into temporal and spatial components.
+
+\begin{itemize}
+    \item \textbf{Step (i)}:
+    \[
+    B(\vec{u}, \vec{u}): \nabla \cdot \vec{u} = -\frac{1}{k} (\vec{u} \cdot \nabla) \vec{u}.
+    \]
+    This suggests that the divergence of \(\vec{u}\) is related to the nonlinear advection term.
+
+    \item \textbf{Step (ii)}:
+    \[
+    \kappa := m^{-1}, \quad \rho = \iint dm \, dv \;|\; p := \rho \nabla^{2} \|\vec x\|^{2}
+    \]
+    Here, \(\kappa\) is introduced as an inverse mass parameter, and the density \(\rho\) is expressed as an integral over mass and volume.
+
+    \item \textbf{Step (iii)}:
+    \[
+    - \frac{1}{k} (\vec{u} \cdot \nabla) \vec{u} = \hat{\varphi} \vec{u}, \quad \hat{\varphi} := - \frac{1}{\kappa} (\vec u \cdot \nabla)
+    \]
+    This step relates the nonlinear advection term to the operator \(\hat{\varphi}\), which is defined in terms of the potential \(\hat{\phi}\).
+
+    \item \textbf{Step (iv)}:
+    \[
+    \phi := \mathbb{1} + \hat \varphi = \sum_{i} \xi_{i} \psi_{i}\, ; \quad \vec{u} = \hat{\phi}\vec u.
+    \]
+    Here, \(\phi\) is decomposed into a sum of modes \(\psi_i\), and the velocity field \(\vec{u}\) is related to \(\hat{\phi}\). We want to note that $\hat \phi$ is a diagonal square invertible matrix. 
+\end{itemize}
+
+Let's start with the bilinear terms. 
+
+\begin{align*}
+\rho \frac{\partial \vec{u}}{\partial t} &= \mu \nabla^2 \vec{u} - (\nabla p + \rho (\vec{u} \cdot \nabla) \vec{u}) + \vec{f}; \quad \vec{f} = 0.
+\end{align*}
+\begin{align*}
+\rho \frac{\partial \vec{u}}{\partial t} = \mu \nabla^2 \vec{u} - \bar B(\vec{u}, \vec{u}) = \mu \nabla^2 \vec{u} - \mathbb{P}(\vec{u}) \;\;\;;
+\end{align*}
+
+\[
+B(\vec{u}, \vec{v}) := B(\vec{u}, \vec{u}) = -(\nabla p + \rho (\vec{u} \cdot \nabla) \vec{u}) = \vec u \cdot A \vec u
+\]
+\begin{align*}
+\rho \frac{\partial \vec{u}}{\partial t} = \mu \nabla^2 \vec{u} - B(\vec{u}, \vec{u}) = \mu \nabla^{2} \vec u - \vec u \cdot k \vec u
+\end{align*} \\
+We have successfully described a bilinear mapping that decomposes into an eigenvalue scaling of the gradient operator $(\nabla)$. We want to further examine the identity $\vec u \cdot k \vec u = k \vec u \cdot \vec u = ku^{2}$ and the conditions for which it holds true, drawing our exploration through a navigation of the relationships between vectors and scalars. Extending the discussion from section 3.5, we want to establish the following identity:
+
+\[
+\vec u \cdot k \vec u = ku^{2}= \nabla p + \rho (\vec u \cdot \nabla) \vec u = \frac{1}{\kappa} \vec u
+\]
+
+\[
+\implies u_{i} = \sum_{i} \kappa_{i} \|\vec u\|^{2} \hat u_{i} \;\;\;;\;\;\; \hat u_{i} := \frac{u_{i}}{\|\vec u\|}  \;,\; \frac{1}{\kappa} = \mathbb{P} (\vec u)
+\] \\ 
+With this, we have transformed a bilinear operation into a linear operation by examining a quaternion scaling projection on a 3D basis vector. Let's repeat our favorite step at every corner and rewrite the Navier Stokes equation as follows: \\ 
+
+\[
+\rho \frac{\partial \vec{u}}{\partial t} = \mu \nabla^2 \vec{u} - \frac{1}{\kappa} \vec u
+\] \\
+We note the relationship $\kappa := m^{-1}$, which we will revisit during dimensional analysis. Next, we want to review the null space of the divergence operator to motivate the continuation of divergence-free vector fields under bilinear and linear mappings. \\ 
+\[
+\nabla \cdot \vec{u} = 0 \implies \vec u = \mathbf{Nul}(\nabla) = \vec 0 . 
+\] \\ 
+We want to note that the continuity condition implies the lack of global monopoles in a fluid dynamic system, motivating us to examine \href{https://www.diva-portal.org/smash/get/diva2:205082/fulltext01.pdf}{the vortex solutions to the system of PDEs}, which we will further revisit in dimensional analysis. Particularly, we want to note the geometry of the null space of a vector field in $\mathbb{R}^{3}$, and further in $\mathbb{R}^{n}$.
+
+\begin{align*}
+B(\vec{u}, \vec{u}) &= -\rho (\vec{u} \cdot \nabla) \vec{u} + \nabla p
+\end{align*}
+
+Recall we said that we could make any of the nonlinear vector terms as the basis of our projection. Rewritten, we want to examine the bilinear term ommitting the pressure gradient and writing it in terms of its viscous diffusion effect:
+\[
+B(\vec{u}, \vec{u}) = -\frac{1}{k} (\vec{u} \cdot \nabla) \vec{u} - \frac{1}{k} \nabla^2 \vec{u} \; \because \text{ Poisson equation.}
+\]
+
+\[
+    \text{Here, }\;\kappa := m^{-1}, \quad \rho = \iint dm \, dv \;|\; p := \rho \nabla^{2} \|\vec x\|^{2}
+\]
+
+\[
+\implies p = \iint_{\mathbb{R} \times \mathbb{R}^{3}} \nabla^{2} \|\vec x\|^{2} dm \, d \vec x^{3} = kM
+\]
+
+\[
+- \frac{1}{k} (\vec{u} \cdot \nabla) \vec{u} = \hat{\varphi} \vec{u}, \quad \hat{\varphi} := - \frac{1}{\kappa} (\vec u \cdot \nabla)
+\]
+
+This step relates the nonlinear advection term to the operator \(\hat{\varphi}\), which is defined in terms of the potential \(\hat{\phi}\), which we will discuss further in the next decomposition. For now, we want to show the equivalence between the nonlinear acceleration terms.
+
+% \[
+% \text{We want to show: } \; \kappa \hat \varphi := (\vec u \cdot \nabla ) = \nabla^{2}
+% \]
+
+% \[
+% \nabla^{2} \vec u = \left( \sum_{i} \frac{\partial^{2}}{\partial x_{i}^{2}}\right) \vec u \quad ; \quad (\vec u \cdot \nabla) \vec u = \left(\sum_{i} \frac{d u_{i}}{d x_{i}} \right) \vec u 
+% \]
+
+% \[
+% \therefore \nabla^{2} \vec u = \sum_{i} \frac{d^{2} u_{i}}{d x_{i}^{2}} \quad ; \quad (\vec u \cdot \nabla) \vec u = \sum_{i} u_{i} \frac{d u_{i}}{d x_{i}}
+% \]
+
+% \[
+% \text{We get a homogeneous O.D.E. equation of the form:} - u \frac{du}{dx} + \frac{du^{2}}{dx^{2}} = 0
+% \]
+
+% We know that equations of this form have the following family of solutions: 
+
+% \[
+% xu = \ln{\|u^{2} + k\|} \iff u = \sqrt{e^{xu} + k}
+% \]
+
+% \[
+% \therefore \therefore \vec u (t, \vec x) := \vec f(\vec u, \vec x) := \vec f(t, \vec x)
+% \]
+
+\begin{remark}
+The derivation above attempts to relate the nonlinear convective operator, \((\vec{u}\cdot\nabla)\vec{u}\), with the diffusive operator, \(\nabla^2\vec{u}\), by writing
+\[
+\kappa \hat \varphi := (\vec{u}\cdot\nabla) \equiv \nabla^{2}.
+\]
+By expressing each term component-wise, one obtains
+\[
+\nabla^{2} \vec{u} = \sum_{i} \frac{d^{2} u_{i}}{d x_{i}^{2}} \quad \text{and} \quad (\vec{u} \cdot \nabla) \vec{u} = \sum_{i} u_{i}\frac{d u_{i}}{d x_{i}},
+\]
+which leads to the homogeneous ODE
+\[
+- u \frac{du}{dx} + \frac{d^{2}u^{2}}{dx^{2}} = 0.
+\]
+The general family of solutions is then given in an implicit form as
+\[
+xu = \ln\|u^{2} + k\| \quad \text{or equivalently} \quad u = \sqrt{e^{xu} + k},
+\]
+and hence the velocity field is expressed as
+\[
+\vec{u}(t,\vec{x}) := \vec{f}(\vec{u},\vec{x}) := \vec{f}(t,\vec{x}).
+\]
+
+This derivation is intriguing because it suggests a scenario in which the nonlinear advection term might, under certain circumstances, balance the diffusive term. However, it is important to emphasize that the general equality
+\[
+(\vec{u}\cdot\nabla)\vec{u} = \nabla^2\vec{u}
+\]
+does not hold in typical fluid flows. The derivation here likely corresponds to a very specific or idealized situation where symmetries or particular assumptions allow for such a reduction. \\\\
+The resulting ODE and its associated family of solutions indicate that, in this restricted context, the dynamics of the velocity field can be captured by a scalar relationship between \(\vec u\) and its derivatives. Nonetheless, the implicit nature of the solution and the unusual form (involving an exponential inside a square root) signal that further analysis is required to assess the stability, uniqueness, and physical relevance of these solutions. Importantly, we are not asserting an equivalence between convection and diffusion in vortex dynamics. Instead, this formal manipulation serves to define a projection decomposition that separates the contributions of the convective operator \((\vec{u}\cdot\nabla)\) and the diffusive operator \(\nabla^{2}\). This approach provides insight into the interplay between nonlinear advection and viscous diffusion, while caution is advised in interpreting the result beyond the specific projection framework.
+\end{remark} 
+\begin{align*}
+\rho \frac{\partial \vec{u}}{\partial t} &= \mu \nabla^2 \vec{u} - \frac{1}{k} \nabla^2 \vec{u} = \left(\mu - \frac{1}{\kappa}\right) \nabla^{2} \vec u.
+\end{align*} \\ 
+We will notice that we now have an effective diffusion equation governing our evolving vector field. We know the family of solution sets that satisfy $u_{t} = \alpha^{2} u_{xx}$. The vector field \(\vec{u}(\vec{x}, t)\) can be decomposed as:
+
+\[
+\vec{u}(\vec{x}, t) = T(t) \Psi(\vec{x}) + f_{\vec x} \, t
+\]
+
+Thus, the solution is given by:
+\[
+\vec{u}(\vec{x}, t) = T_0 e^{\lambda t} \Psi(\vec{x}) + f_{0} \, ,
+\]
+
+where \(T_0\) and \(f_0\) are determined by the initial conditions. Notice that we have done something assumptive here, when solving our Poisson equation. Let's examine the Poisson-pressure gradient projection: \\ 
+% So far, we have shown two relationships: 
+
+% \[
+% \begin{cases}
+%     \partial_{t} \vec u = \left(\mu + \frac{1}{\kappa}\right) \nabla^{2} \vec u & \quad (i)\\ 
+%     \partial_{t} \vec u = \mu \nabla^{2} \vec u + \frac{1}{\kappa} \vec u & \quad (ii)
+% \end{cases}
+% \] \\ 
+% We have shown an eigenvalue decomposition problem of the form: 
+% \[
+%  \mathcal{C}_{1} (\nabla^{2} \vec u) = \frac{1}{\kappa} \vec u 
+% \] \\
+% Finally, we show an eigenfunction decomposition of the velocity, defined in terms of the gradient of the sum of the weighted entries of the diagonal square invertible matrix that we defined earlier for the scalar potential field of the system. 
+
+% \[
+% \phi : = \mathbb{1} + \hat \varphi = \mathbb{1}_{i} (\vec e + \mathcal{O}\varphi) = \sum_{i} \xi_{i} \psi_{i} \quad ; \quad \vec u = \hat \phi \vec u 
+% \]
+% \[
+% \vec u = \nabla \phi \implies \phi = \nabla^{-1} \vec u \quad \text{and} \quad \vec u = \hat \phi \vec u 
+% \]
+% \[
+% \implies \vec u = \mathbb{1} \phi \vec u = \mathbb{1} (\nabla^{-1} \vec u) \vec u 
+% \]
+% \begin{align}
+%     \therefore \vec u = \varepsilon_{\nu} \vec u^{*} \nabla^{-1}\|\vec u\| = \varepsilon_{\nu} \nabla^{-1} \| \vec u \|^{2}
+% \end{align}
+% \begin{align}
+%     \therefore \langle \vec u \rangle := \varepsilon_{\nu} \int_{\mathcal{L}} \|\vec u (0, \vec x)\|^{2} + \int_{\mathcal{K}} \|\vec \omega (0, x_{i})\|^{2} = \varepsilon_{\nu} \int_{\mathcal{L}} \|\vec u (0, \vec x)\|^{2} + \mathcal{K}_{i}
+% \end{align}
+
+\begin{theorem} \textbf{Projection Decomposition and Energy Identity for the nonlinear Vector Field.}  \\ 
+Let \(\vec{u} = \vec{u}(t,\vec{x})\) be a sufficiently smooth velocity field defined on a domain \(X\) (with \(X \subseteq \mathbb{R}^n\)) and suppose that the following two relationships hold:
+\[
+\begin{cases}
+\partial_{t} \vec{u} = \left(\mu + \frac{1}{\kappa}\right) \nabla^{2} \vec{u}, \quad & (i) \\[1mm]
+\partial_{t} \vec{u} = \mu \nabla^{2} \vec{u} + \frac{1}{\kappa} \vec{u}, \quad & (ii)
+\end{cases}
+\]
+so that an eigenvalue decomposition of the form
+\[
+\mathcal{C}_{1} \left(\nabla^{2} \vec{u}\right) = \frac{1}{\kappa} \vec{u}
+\]
+is obtained. Define the scalar potential field \(\phi\) via a diagonal square invertible matrix decomposition by
+\[
+\phi := \mathbb{1} + \hat{\varphi} = \mathbb{1}_{i}\Bigl(\vec{e} + \mathcal{O}\varphi\Bigr) = \sum_{i} \xi_{i} \psi_{i},
+\]
+and assume that the velocity field admits the eigenfunction decomposition
+\[
+\vec{u} = \hat{\phi} \vec{u},
+\]
+with the relation
+\[
+\vec{u} = \nabla \phi \quad \text{so that} \quad \phi = \nabla^{-1} \vec{u}.
+\]
+Then, by combining these definitions we deduce
+\[
+\vec{u} = \mathbb{1}\phi\,\vec{u} = \mathbb{1}\bigl(\nabla^{-1}\vec{u}\bigr)\vec{u},
+\]
+and consequently,
+\[
+\vec{u} = \varepsilon_{\nu} \vec{u}^{*}\,\nabla^{-1}\|\vec{u}\| = \varepsilon_{\nu}\nabla^{-1}\|\vec{u}\|^{2}.
+\]
+Furthermore, the net energy associated with the vortex field is expressed by the identity
+\[
+\langle \vec{u} \rangle := \varepsilon_{\nu} \int_{\mathcal{L}} \|\vec{u}(0,\vec{x})\|^{2}\,d\vec{x} + \int_{\mathcal{K}} \|\vec{\omega}(0,x_{i})\|^{2}\,dx_{i}
+= \varepsilon_{\nu} \int_{\mathcal{L}} \|\vec{u}(0,\vec{x})\|^{2}\,d\vec{x} + \mathcal{K}_{i}.
+\]
+The theorem establishes a projection decomposition of the velocity field in terms of its scalar potential and provides an eigenfunction expansion and corresponding energy identity for the vortex field. 
+\textbf{Vector field representation:}
+\[
+\vec{u}(\vec{x}, t) \subseteq \kappa \{\vec{u}(\vec{x}, t)\} \, , \quad \vec{u} \in \mathcal{D} \subseteq C^\infty([0, \infty))
+\]
+\end{theorem}
+
+\subsection{Classes of equivalent solution sets}
+Now that we have established that a family of vector field solution sets for the Navier Stokes equation decomposes into a family of eigenfunction equation, we want to sequentially go through the decomposition. We begin by considering the following separation of the velocity field \(\vec{v}(\vec{x}, t)\): \\ 
+
+\textbf{Separation of Variables (Temporal and Spatial Decomposition)}\\[1mm]
+We look for solutions of the form:
+\[
+\vec{v}(\vec{x}, t) = \vec{X}(\vec{x}) \, T(t),
+\]
+where \(\vec{X}(\vec{x})\) represents the spatial dependence and \(T(t)\) the temporal part. Plugging this ansatz into the general equation for \(\partial_{t}\vec{v}\) yields
+\[
+\partial_{t}\vec{v} = \vec{X}(\vec{x}) \, T'(t),
+\]
+and the Laplacian acts only on the spatial part:
+\[
+\nabla^{2} \vec{v} = \nabla^{2} \vec{X}(\vec{x}) \, T(t).
+\]
+Thus, the equation becomes
+\[
+\vec{X} \, T'(t) = \nabla^{2}\vec{X}\, T(t) + \bar{B}(\vec{v}, \vec{v}),
+\]
+where \(\bar{B}(\vec{v}, \vec{v})\) is the bilinear operator capturing the nonlinear interactions. We further decompose \(\vec{f}(\vec{x}, t)\) defined by
+\[
+\vec{f}(\vec{x}, t) = g(\vec{x})\, h(t) + \bar{B}(\vec{F}, \vec{F})(\vec{x}, t),
+\]
+so that we have
+\[
+\vec{f}(\vec{x},t) = \partial_{t}\vec{v} = \vec{X}(\vec{x})\, T'(t),
+\]
+and also
+\[
+g(\vec{x})\, h(t) = \nabla^{2}_{\vec{x}\vec{x}} \vec{v} = \vec{X}''(\vec{x})\, T(t).
+\]
+Equating the two decompositions gives the relation
+\[
+\vec{X} \, T'(t) = \vec{X}'' \, T(t) + \bar{B}(\vec{v}, \vec{v}) = -\lambda,
+\]
+where \(\lambda\) represents the eigenvalue arising from the spatial operator.
+
+\bigskip
+
+\textbf{Temporal Decomposition}\\[1mm]
+Dividing both sides by \(T(t)\) and assuming the spatial component is nonzero, we obtain:
+\[
+\frac{T'(t)}{T(t)} = \hat{X}^{-1}\left( \vec{X}'' + \frac{\bar{B}(\vec{v}, \vec{v})}{T(t)} \right) = -\Lambda,
+\]
+where \(\hat{X} = \mathbb{I}_{n}\vec{X}\) is an appropriate projection of \(\vec{X}\) in \(\mathbb{R}^{n}\). This immediately gives the temporal ordinary differential equation:
+\[
+T'(t) + \Lambda \, T(t) = 0.
+\]
+Solving this, we find:
+\[
+T(t) = e^{-\Lambda t}.
+\]
+
+\bigskip
+
+\textbf{Spatial (Eigenfunction) Decomposition}\\[1mm]
+For the spatial part, we evaluate the relation
+\[
+\vec{X}'' \, T(t) + \bar{B}(\vec{v}, \vec{v}) + \Lambda\, T(t) \, \hat{X} = 0.
+\]
+This can be rearranged to
+\[
+\vec{X}'' + \Lambda\, \hat{X} = \hat{\tau},
+\]
+where \(\hat{\tau}\) incorporates contributions from the bilinear term. It is known that for standard boundary conditions the eigenfunctions of the Laplacian on a domain are given by sine functions. For example, one finds
+\[
+\psi_{n}(x) = \sin(n\pi x),
+\]
+and thus, we can expand the spatial component as:
+\[
+\hat{X} = \sum_{n=0}^{\infty} \psi_{n}(x) + \tau_{n},
+\]
+with \(\tau_{n}\) being coefficients that account for the nonlinear terms. Therefore, the velocity field takes the form:
+\[
+\vec{v}(x,t) = \hat{X} \, T(t) = e^{-\Lambda t} \left( \sum_{n=0}^{\infty} \psi_{n}(x) + \tau_{n} \right).
+\]
+
+\bigskip
+
+\textbf{Incorporating the Bilinear Operator}\\[1mm]
+Let us denote the bilinear operator acting on the velocity field by:
+\[
+\bar{B}(\vec{v}, \vec{v}) = \alpha \circ \beta \,(\vec{v}),
+\]
+which is known to have a complete mapping from \(\vec{u}\) to \(\bar{B}\). We can also express this in terms of the mapping
+\[
+\vec{f} : (\vec{X},T) \mapsto (G, H).
+\]
+Thus, we rewrite the expansion as:
+\[
+\vec{v}(x,t) = e^{-\Lambda t} \left( \sum_{n=0}^{\infty} \psi_{n}(x) + \alpha\beta(\vec{v}) \right)
+= e^{-\Lambda t} \sum_{n=0}^{\infty} \left( \psi_{n}(x) + \sigma_{n}(\vec{v}) \right).
+\]
+We know that in cases of a non-zero vorticity condition, we can add a multilinear operator, which return an additional winding term to the solution set.
+\[
+\vec{v}(\vec x,t) = e^{-\Lambda t} \left( \sum_{n=0}^{\infty} \psi_{n}(x) + \alpha\beta \gamma \delta (\vec{v}) \right)
+= e^{-\Lambda t} \left( \vec \psi(\vec x) + \mathcal{O}(\vec{v}) \right).
+\]
+
+\bigskip
+
+\textbf{Final Eigenfunction Expansion}\\[1mm]
+The final form of the eigenvector (or eigenfunction) decomposition of the velocity field is given by:
+\[
+\vec{v}(x,t) = \sum_{n=1}^{\infty} \xi_{n} \, T_{n}(t) \, \psi_{n}(x_{n}) + \varepsilon_{0} T_{0}\,\psi_{0}(x_{0}) + \mathcal{O} (v_{n}),
+\]
+where the coefficients \(\xi_n\) and \(T_{n}(t)\) arise from the solution of the temporal and spatial eigenvalue problems. This expansion represents a closed-form eigenfunction solution to the original system, with convergence ensured by the bounded order of the composite functions (by the Dominated Convergence Theorem and known Fourier series convergence results).
+
+\bigskip
+
+\textbf{Annotations to summarize the decomposition to yield the result:}
+\begin{enumerate}
+    \item \textbf{Decomposition into Temporal and Spatial Parts:} The ansatz \(\vec{v}(\vec{x},t) = \vec{X}(\vec{x}) T(t)\) separates the variables so that the temporal evolution is governed by an ODE, and the spatial part is solved via eigenfunction expansion.
+    \item \textbf{Temporal ODE:} From the relation \(\vec{X}T' = \vec{X}''T + \bar{B}\), we isolate the time derivative and obtain \(T'(t) + \Lambda T(t) = 0\), whose solution is \(T(t) = e^{-\Lambda t}\).
+    \item \textbf{Spatial Eigenfunction Problem:} The spatial differential equation \(X'' + \Lambda \hat{X} = \hat{\tau}\) leads to the known eigenfunctions (e.g., sine series) for the Laplacian operator.
+    \item \textbf{Bilinear Operator Incorporation:} The nonlinear term \(\bar{B}(\vec{v}, \vec{v})\) is incorporated into the expansion via an additional series term, represented by \(\alpha\beta(\vec{v})\) or \(\sigma_{n}(\vec{v})\).
+    \item \textbf{Final Expansion:} The velocity field is expressed as a sum over spatial eigenfunctions modulated by their time-dependent coefficients, yielding the full eigenfunction expansion.
+\end{enumerate}
+
+This structured approach outlines the process of finding particular solutions by decomposing the system into its temporal and spatial components and accounting for the nonlinear interactions via the bilinear operator.
+
+
+
+\begin{align}
+    \therefore \vec{v}(x,t) = \sum_{n=1}^{\infty} \xi_{n} \, T_{n}(t) \, \psi_{n}(x_{n}) + \varepsilon_{0} T_{0}\,\psi_{0}(x_{0}) + \mathcal{O} (v_{n})
+\end{align}
+
+This essentially gives us an eigenvector decomposition form of our velocity vector $\vec v$. We also know that our position matrix $\hat X$ is diagonal as per definition, and other terms are coefficients. This gives us a closed form eigenfunction expansion to solve for $\vec v (x,t)$. Furthermore, we can show the convergence of an eigenvalue expansion in this case, since the composite functions are in bounded order as per the Dominated Convergence Theorem and the known convergence of the Fourier series. \\\\
+We want to incorporate our previous results into our symbolic decomposition to show that the known analytical solutions to the particular system of PDEs is compatible with our discussion so far. 
+
+\subsubsection{Separation of Variables for Time-Dependent 1D Systems}
+We assume a separable form for the solution:
+\begin{equation}
+    \Psi(x,t) = \psi(x)\phi(t), \quad \vec{u}(x,t) = X(x)T(t).
+\end{equation}
+Substituting into the governing equation,
+\begin{equation}
+    u_t - u_{xx} = p(x),
+\end{equation}
+we separate variables:
+\begin{equation}
+    \frac{T'(t)}{T(t)} = \frac{X''(x) + p(x)}{X(x)} = -\lambda.
+\end{equation}
+This yields two ODEs:
+\begin{align}
+    T'(t) &= -\lambda T(t) \Rightarrow T(t) = e^{-\lambda t}, \\
+    X''(x) + p(x) &= -\lambda X(x).
+\end{align}
+Solving for $X(x)$ using eigenfunction expansion,
+\begin{equation}
+    X_n(x) = C_n \sin(n \pi x),
+\end{equation}
+we obtain the general solution:
+\begin{equation}
+    \vec{u}(x,t) = \sum_{n=1}^{\infty} C_n e^{-\lambda_n t} \sin(n \pi x).
+\end{equation}
+
+\subsubsection{Projection Decomposition for Nonlinear Systems}
+The Navier-Stokes equation with bilinear term:
+\begin{equation}
+    \rho \partial_t \vec{u} = \mu \nabla^2 \vec{u} + \bar{B}(\vec{u},\vec{u}).
+\end{equation}
+We introduce a projection decomposition,
+\begin{equation}
+    - \frac{1}{k} (\vec{u} \cdot \nabla) \vec{u} = \hat{\varphi} \vec{u},
+\end{equation}
+which allows rewriting as an eigenvalue problem:
+\begin{equation}
+    \mathcal{C}_1(\nabla^2 \vec{u}) = \frac{1}{\kappa} \vec{u}, \quad \kappa = \sqrt{2 \rho}.
+\end{equation}
+Thus, using eigenfunction expansion,
+\begin{equation}
+    \vec{u}(x,t) = e^{-\Lambda t} \sum_{n=0}^{\infty} \psi_n(x) + \tau_n.
+\end{equation}
+
+\subsubsection{Handling Pressure and Forcing Terms}
+For equations of the form:
+\begin{equation}
+    p \frac{\partial \vec{u}}{\partial t} = - \nabla p + \vec{f},
+\end{equation}
+we integrate over time:
+\begin{equation}
+    \vec{u}(\vec{x}, t) = \frac{1}{p} \int \left( -\frac{\partial p}{\partial x_1} + \vec{f}(\vec{x}, t) \right) dt.
+\end{equation}
+Applying the decomposition,
+\begin{align}
+    \vec{u}_1 &= \frac{1}{p} \frac{\partial p}{\partial x_1} + \frac{1}{p} \vec{f} dt, \\
+    \frac{1}{p} dp &= \mu (\vec{f} - p \vec{u}) du, \\
+    p &= \mu (\vec{f} - p \vec{u}).
+\end{align}
+Thus,
+\begin{equation}
+    p = \vec{u} (\vec{p} - \vec{u}).
+\end{equation}
+
+\subsubsection{Topological Charge and the $\Gamma$ Identity }
+The circulation of a flow—denoted by $\Gamma$—is defined as the line integral of the velocity field around a closed curve:
+\begin{equation}
+    \Gamma = \oint_{C} \vec{u} \cdot d\vec{s}.
+\end{equation}
+By Stokes' theorem, this circulation is equivalent to the flux of the vorticity through any surface $S$ bounded by that curve:
+\begin{equation}
+    \Gamma = \iint_{S} (\nabla \times \vec{u}) \cdot d\vec{S}.
+\end{equation}
+This $\Gamma$ identity connects the local rotational characteristics of the fluid (given by the vorticity, $\nabla \times \vec{u}$) to the global circulation around the loop. \\ \\ 
+The \textit{topological charge} of a vortex is a quantized measure that describes how many times the fluid "wraps around" a singularity or vortex core. In essence, it counts the net rotation or twist imparted by the flow, much like the \textit{winding number} in complex analysis, which counts the number of times a contour encircles a singularity and directly determines the residue of an analytic function. \\ \\ 
+Thus, the topological charge in vortex dynamics plays a similar role to the winding number in complex analysis—it serves as a conserved, quantized indicator of the rotational structure in the flow, ensuring that despite continuous deformations, the net circulation (and hence the topological charge) remains invariant. This invariance is critical in understanding both the stability and the persistence of vortex structures in a fluid.
+
+\begin{remark}
+We have now incorporated our previous results into our symbolic decomposition, demonstrating that the known analytical solutions to the particular system of PDEs are fully compatible with our discussion so far. This consistency supports our formulation and validates our eigenfunction-based approach.
+\end{remark}
+
+% \section{Dimensional analysis}
+% The most rigorous strategy in conducting dimensional analysis is to examine the dimensionality of all terms in the left and right-hand sides of each identity presented in the paper; admittedly a very tedious task. \\ \\ 
+% Assuming continuity, further rearrangements and discretization of time gives us: 
+% \[\vec{u}^{n+1} = \vec{u}^{n} + \partial_{t} \vec{u}^{n} = \vec{u}^{n} + \mu\nabla^{2}\vec{u} + \bar{B}(\vec{u},\vec{u} ) = \vec{u}^{n} + \mu\nabla^{2}\vec{u}^{n} - \nabla p^{n} \]
+% \[\implies -\nabla p^{n} = \vec{u}^{n+1} - \vec{u}^{n} - \mu\nabla^{2}\vec{u}^{n} 
+%  = \partial_{t}\vec{u}^{n} - \mu\nabla^{2}\vec{u}^{n}\]
+%  and 
+%  \[\rho (\vec{u}\cdot\nabla)\vec{u} = \vec{f_{1}}\]
+%  \[\therefore -\bar{B}(\vec{u}, \vec{u}) = \rho(\vec{u}\cdot\nabla)\vec{u} + \nabla p(\vec{u}) = \rho(\vec{u}\cdot\nabla)\vec{u} + \partial_{t}\vec{u} - \mu\nabla^{2}\vec{u}\]
+% Solving the modified diffusion equation: 
+% \[\partial_{t}\vec{u} = \mu\nabla^{2}\vec{u} + \bar{B}(\vec{u}, \vec{u}) = \mu\nabla^{2}\vec{u} - \rho(\vec{u}\cdot\nabla)\vec{u} - \partial_{t}\vec{u} + \mu\nabla^{2}\vec{u}\]
+% \[\implies 2 \partial_{t}\vec{u} = 2\mu\nabla^{2}\vec{u} - \rho (\vec{u}\cdot\nabla)\vec{u}\]
+% \[\therefore - \bar{B}(\vec{u}, \vec{u}) = \frac{1}{2}\rho (\vec{u}\cdot\nabla)\vec{u}\]
+% \[-\nabla p = \frac{1}{2}\vec{f_{1}}\]
+\newpage
+\section{References}
+\begin{enumerate}
+    \item https://www.claymath.org/wp-content/uploads/2022/06/navierstokes.pdf
+    \item https://arxiv.org/pdf/1402.0290
+    \item https://terrytao.wordpress.com/2014/02/04/finite-time-blowup-for-an-averaged-three-dimensional-navier-stokes-equation/
+    \item https://www.diva-portal.org/smash/get/diva2:205082/fulltext01.pdf
+    \item http://brennen.caltech.edu/fluidbook/basicfluiddynamics/equationsofmotion/
+    vorticitytransport.pdf
+    \item https://terrytao.wordpress.com/2007/03/18/why-global-regularity-for-navier-stokes-is-hard/
+    \item https://doi.org/10.1016/j.apm.2015.09.048
+    \item https://doi.org/10.1016/j.enganabound.2024.106020
+    \item https://onlinelibrary.wiley.com/doi/10.1111/sapm.70052
+\end{enumerate}
+ 
+\BibTexMode{%
+   \bibliographystyle{alpha}
+   \bibliography{template}
+}%
+\BibLatexMode{\printbibliography}
+
+\end{document}
+
+
+%--------------------------------------------------------
+%
+% x.tex - end of file
+%--------------------------------------------------------
